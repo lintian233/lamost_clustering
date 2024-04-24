@@ -1,6 +1,6 @@
 
-from DataProcess.SpectralData import SpectralData
-from Dataset import Dataset
+from .SpectralData import SpectralData
+from .Dataset import Dataset
 
 
 class SDSSDataset(Dataset):

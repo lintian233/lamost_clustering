@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from ReduceData import ReduceData
+from .ReduceData import ReduceData
 
 class Reducer(ABC):
     reducer: Any

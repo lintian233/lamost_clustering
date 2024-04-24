@@ -3,7 +3,7 @@ from typing import int, Any
 
 from numpy.typing import ArrayLike
 
-from SpectralData import SpectralData
+from .SpectralData import SpectralData
 from ..config import DATASETBASEPATH
 
 class Dataset(ABC):

@@ -2,8 +2,8 @@ from typing import int, Any, List, Tuple
 
 from numpy.typing import ArrayLike
 
-from SpectralData import SpectralData
-from Dataset import Dataset
+from .SpectralData import SpectralData
+from .Dataset import Dataset
 
 class DataProcess:
     

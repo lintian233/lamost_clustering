@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from ClusterData import ClusterData
+from .ClusterData import ClusterData
 
 
 class Cluster(ABC):
