@@ -25,5 +25,5 @@ class Cluster(ABC):
     def get_result(self, index: int) -> ClusterData:
         """
         """
-        a = 1
+        a = 10
         raise NotImplementedError("get_result method not implemented")
