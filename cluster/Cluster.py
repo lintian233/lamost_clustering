@@ -22,7 +22,7 @@ class Cluster(ABC):
         raise NotImplementedError("info_result method not implemented")
     
     
-    def get_result(self, index) -> ClusterData:
+    def get_result(self, index: int) -> ClusterData:
         """
         """
         raise NotImplementedError("get_result method not implemented")
