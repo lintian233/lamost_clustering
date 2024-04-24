@@ -6,6 +6,7 @@ from numpy.typing import ArrayLike
 from .SpectralData import SpectralData
 from ..config import DATASETBASEPATH
 
+
 class Dataset(ABC):
     __dataset: ArrayLike[SpectralData]
     __dir_base_path = DATASETBASEPATH

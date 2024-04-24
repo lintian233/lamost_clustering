@@ -3,7 +3,6 @@ from typing import Any
 
 from .ClusterData import ClusterData
 
-
 class Cluster(ABC):
     cluster: Any
     result_dir: str

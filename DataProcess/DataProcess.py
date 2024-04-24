@@ -5,6 +5,7 @@ from numpy.typing import ArrayLike
 from .SpectralData import SpectralData
 from .Dataset import Dataset
 
+
 class DataProcess:
     
     @staticmethod
