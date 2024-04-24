@@ -17,7 +17,7 @@ class SpectralData:
     data: NDArray[Any]
     name: str
 
-    def __init__(self,data: NDArray[Any] = None):
+    def __init__(self,data: NDArray[Any] = None) -> None:
         if data is None:
             self.data = np.zeros(1, dtype=SpectralDataType)
         else:

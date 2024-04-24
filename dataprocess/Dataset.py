@@ -18,17 +18,17 @@ class Dataset(ABC):
         对于每一个光谱初始化成SpectralData对象。    
         """
 
-    def __getitem__(self, idx: int):
+    def __getitem__(self, idx: int) -> SpectralData:
         """Return the item at the given index"""
         return self.dataset[idx]
     
     
-    def __len__(self):
+    def __len__(self) -> int:
         """Return the number of items in the dataset"""
         return len(self.dataset)    
 
 
-    def __iter__(self):
+    def __iter__(self) -> Any:
         """Return an iterator over the dataset"""
         return iter(self.dataset)
     

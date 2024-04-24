@@ -4,7 +4,7 @@ from .Dataset import Dataset
 
 class LamostDataset(Dataset):
 
-    def __init__(self, dirpath: str):
+    def __init__(self, dirpath: str) -> None:
         super().__init__(dirpath)
 
     def read_data(self, path: str) -> SpectralData:

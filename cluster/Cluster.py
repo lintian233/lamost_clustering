@@ -16,7 +16,7 @@ class Cluster(ABC):
         pass
 
 
-    def info_result(self):
+    def info_result(self) -> None:
         """
         """
         raise NotImplementedError("info_result method not implemented")
