@@ -1,14 +1,15 @@
 from abc import ABC, abstractmethod
-from typing import int, Any
+from typing import Any, List
 
-from numpy.typing import ArrayLike
+from numpy.typing import NDArray
 
 from .SpectralData import SpectralData
-from ..config import DATASETBASEPATH
+from config.config import DATASETBASEPATH
+
 
 
 class Dataset(ABC):
-    __dataset: ArrayLike[SpectralData]
+    __dataset: List[SpectralData]
     __dir_base_path = DATASETBASEPATH
 
     def __init__(self, dirpath: str):
@@ -63,8 +64,9 @@ class Dataset(ABC):
         raise NotImplementedError("parse_dataset method not implemented")
     
 
-    def to_numpy(self) -> ArrayLike[Any]:
+    def to_numpy(self) -> NDArray[Any]:
         """
+        NDArray[Any] : 返回一个numpy数组，Any是SpectralDataType类型。
         将数据集转化为numpy数组。
         """
         raise NotImplementedError("to_numpy method not implemented")

@@ -13,5 +13,5 @@ class TestSpectralCluster(unittest.TestCase):
         raise NotImplementedError("test_cluster method not implemented")
 
 
-    def test_get_cluster(self) -> None:
-        raise NotImplementedError("test_get_cluster method not implemented")
+    def test_info_result(self) -> None:
+        raise NotImplementedError("test_info_result method not implemented")

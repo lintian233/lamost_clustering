@@ -1,16 +1,18 @@
 import numpy as np
 
 from numpy.typing import NDArray
-from typing import Any
+from numpy import dtype
+
+from typing import Any, TypeVar, Generic
 from dataclasses import dataclass
 
-SpectralDataType = [
+SpectralDataType = dtype([
     ('name', "U10", (1,)),
     ('flux', np.float64, (3700,)),
-    ('wavelength', np.float64, (3700,))
+    ('wavelength', np.float64, (3700,)),
     ('class', "U10", (1,)),
     ('subclass', "U10", (1,))
-]
+])
 
 @dataclass
 class SpectralData:
@@ -28,7 +30,6 @@ class SpectralData:
             if data.dtype != SpectralDataType:
                 raise TypeError("data must have the correct dtype")
             self.data = data
-
 
 
 

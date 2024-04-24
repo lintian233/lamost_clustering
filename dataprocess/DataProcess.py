@@ -1,4 +1,4 @@
-from typing import int, Any, List, Tuple
+from typing import Any, List, Tuple
 
 from numpy.typing import ArrayLike
 
