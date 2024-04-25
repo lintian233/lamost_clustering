@@ -74,9 +74,7 @@ class Dataset(ABC):
         # return spectral_datas
         filenames = os.listdir(dirpath)
     
-        def load_fits(file_name):
-            with fits.open(os.path.join(dirpath, file_name)) as hdulist:
-                return SpectralData(hdulist)
+        current_data = self.read_data(dirpath + filenames[0])
     
         spectral_datas = []
         with ThreadPoolExecutor() as executor:

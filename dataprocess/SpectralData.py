@@ -18,9 +18,7 @@ SpectralDataType = dtype([
 class SpectralData:
     data: NDArray[Any]
     name: str
-    '''
-    TODO: 这里要改一下，fits文件读取后是hdulist类型，并且无法转换成ndarray
-    '''
+
     def __init__(self,data: NDArray[Any] = None) -> None:
         if data is None:
             self.data = np.zeros(1, dtype=SpectralDataType)
