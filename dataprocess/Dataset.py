@@ -1,8 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import Any, List
+import os
+from concurrent.futures import ThreadPoolExecutor
 
+import numpy as np
 from numpy.typing import NDArray
 from pandas import DataFrame
+from astropy.io import fits
 
 from .SpectralData import SpectralData
 from config.config import DATASETBASEPATH
@@ -47,7 +51,7 @@ class Dataset(ABC):
     def __str__(self) -> DataFrame:
         return self.info()
 
-    def add_dataset(self, dirpath: str) -> None:
+    def add_dataset(self, dirpath: str) -> NDArray:
         """
         TODO : 解析数据集文件夹，使用read_data函数， 读取数据集中的所有数据。
         以ArrayLike[SpectralData]的形式存储在self.__dataset中。并将这个数据集序列化到__dir_data_path中。
@@ -62,7 +66,24 @@ class Dataset(ABC):
         __dir_data_path: str
         2. 数据集格式：NDArray[SpectralDataType](定义在SpectralData中)
         """
-        raise NotImplementedError("parse_dataset method not implemented")
+        # filenames = os.listdir(dirpath)
+        # spectral_datas = np.empty(len(filenames), dtype=object)
+        # for i, file_name in enumerate(filenames):
+        #     with fits.open(dirpath + file_name) as hdulist:
+        #         spectral_datas[i] = SpectralData(hdulist)
+        # return spectral_datas
+        filenames = os.listdir(dirpath)
+    
+        def load_fits(file_name):
+            with fits.open(os.path.join(dirpath, file_name)) as hdulist:
+                return SpectralData(hdulist)
+    
+        spectral_datas = []
+        with ThreadPoolExecutor() as executor:
+            results = executor.map(load_fits, filenames)
+            spectral_datas = list(results)
+    
+        return np.array(spectral_datas, dtype=object)
     
 
     def to_numpy(self) -> NDArray[Any]:
