@@ -11,14 +11,14 @@ from typing import Any
 Data/
     -ReduceData/
                -UMAP/
-                    -XXX-SNxxxx-Qxxx-Gxxx/
+                    -XXX-SNxxxx-Qxxx-Gxxx-1/
                                         -data2d.npy
                                         -datand.npy
                                         -labels.npy
                                         -hyperparameters.json
                 
                 -PCA/
-                    -XXX-SNxxxx-Qxxx-Gxxx/
+                    -XXX-SNxxxx-Qxxx-Gxxx-1/
                                         -data2d.npy
                                         -datand.npy
                                         -labels.npy
