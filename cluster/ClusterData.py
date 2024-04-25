@@ -10,7 +10,7 @@ from typing import Any
 Data/
     -ClusterData/
                 -SpectralClustering/
-                                   -XXX-SNxxxx-Qxxx-Gxxx/
+                                   -XXX-SNxxxx-Qxxx-Gxxx-1/
                                                         -data2d.npy
                                                         -labels.npy
                                                         -hyperparameters.json
