@@ -10,16 +10,19 @@ from typing import Any
 存储在一个文件夹内，文件夹名字为目录结构如下。
 Data/
     -ReduceData/
-               -1/
-                    -data2d.npy
-                    -datand.npy
-                    -labels.npy
-                    -hyperparameters.json
-                -2/
-                    -data2d.npy
-                    -datand.npy
-                    -labels.npy
-                    -hyperparameters.json
+               -UMAP/
+                    -XXX-SNxxxx-Qxxx-Gxxx/
+                                        -data2d.npy
+                                        -datand.npy
+                                        -labels.npy
+                                        -hyperparameters.json
+                
+                -PCA/
+                    -XXX-SNxxxx-Qxxx-Gxxx/
+                                        -data2d.npy
+                                        -datand.npy
+                                        -labels.npy
+                                        -hyperparameters.json
 """
 
 @dataclass
