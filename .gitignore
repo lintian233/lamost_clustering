@@ -2,3 +2,7 @@
 __pycache__
 
 *.xmind
+
+*.fits
+*.fits.gz
+origin_data/*
