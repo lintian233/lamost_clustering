@@ -74,11 +74,9 @@ class Dataset(ABC):
         # return spectral_datas
         filenames = os.listdir(dirpath)
     
-        current_data = self.read_data(dirpath + filenames[0])
-    
-        spectral_datas = []
+
         with ThreadPoolExecutor() as executor:
-            results = executor.map(load_fits, filenames)
+            results = executor.map(self.read_data(), [dirpath + filename for filename in filenames])
             spectral_datas = list(results)
     
         return np.array(spectral_datas, dtype=object)
