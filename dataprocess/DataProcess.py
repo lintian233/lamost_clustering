@@ -60,7 +60,7 @@ class DataProcess:
         Dataset, 数据集
         """
         raise NotImplementedError("load_dataset method not implemented")
-    
+
     @staticmethod
     def list_datasets() -> DataFrame:
         """
@@ -75,8 +75,8 @@ class DataProcess:
         for item in dataset_dirs:
             current = glob.glob(item + "*.npy")
             dataset.append(current)
-        
-        pattern = r'\\([A-Za-z]+-\d+)-SN(\d+)-STAR(\d+)-QSO(\d+)-GALAXY(\d+)'
+
+        pattern = r"\\([A-Za-z]+-\d+)-SN(\d+)-STAR(\d+)-QSO(\d+)-GALAXY(\d+)"
 
         datasets_info = []
         for item in dataset:
@@ -90,13 +90,10 @@ class DataProcess:
                     info.append(match.group(4))
                     info.append(match.group(5))
             datasets_info.append(info)
-        
-        INFO =  DataFrame(datasets_info, columns=["DATASET_NAME", "NUM_SPECTRA", "STAR", "QSO", "GALAXY"])
-        
+
+        INFO = DataFrame(
+            datasets_info,
+            columns=["DATASET_NAME", "NUM_SPECTRA", "STAR", "QSO", "GALAXY"],
+        )
+
         return INFO
-        
-        
-
-
-
-

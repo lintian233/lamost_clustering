@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from dataprocess import SpectralData, SpectralDataType
+from dataprocess.SpectralData import SpectralData, SpectralDataType
 
 
 class TestSpectralData(unittest.TestCase):

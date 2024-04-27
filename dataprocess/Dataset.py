@@ -8,8 +8,8 @@ from pandas import DataFrame
 from concurrent.futures import ThreadPoolExecutor
 
 from .SpectralData import SpectralData, SpectralDataType
+from .util import parser_fits_path, generate_dataset_name
 from config.config import DATASETBASEPATH
-from .util import *
 
 
 class Dataset(ABC):
@@ -60,7 +60,6 @@ class Dataset(ABC):
         FORMAT:
         INDEX ,CLASS, SUBCLASS, FLUX_SHAPE, WAVELENGTH_SHAPE
         """
-
 
     def __str__(self) -> DataFrame:
         return self.info()

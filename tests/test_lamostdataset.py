@@ -1,4 +1,4 @@
-from dataprocess import LamostDataset
+from dataprocess.LamostDataset import LamostDataset
 from dataprocess.SpectralData import SpectralDataType
 
 import unittest

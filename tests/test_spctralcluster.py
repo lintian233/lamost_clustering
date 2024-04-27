@@ -1,6 +1,6 @@
 import unittest
 
-from cluster import SpectralCluster
+from cluster.SpectralCluster import SpectralCluster
 
 from typing import Any
 
