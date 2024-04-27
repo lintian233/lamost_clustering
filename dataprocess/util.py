@@ -13,6 +13,8 @@ def generate_dataset_name(class_name: str, base_dir: str, data_numpy: NDArray) -
     dataset: Dataset, 数据集
     返回：
     str, 数据集的名称
+    >>> generate_dataset_name("LamostDataset", "/Data/Dataset/Lamost", np.array([]))
+    'LamostDataset-000-SN0-STAR0-QSO0-GALAXY0'
     """
     dataset_name = class_name
     dataset_index = generate_new_index(base_dir)
@@ -68,7 +70,10 @@ def generate_new_index(dataset_dir: str) -> str:
     """
     index_set_list = []
 
-    dataset_files = glob.glob(dataset_dir + "/*.npy")
+    if dataset_dir[-1] != "/":
+        dataset_dir += "/"
+
+    dataset_files = glob.glob(dataset_dir + "*.npy")
 
     patten_index = r"(\d+)-SN"
     for dataset_file in dataset_files:

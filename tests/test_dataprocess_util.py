@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from dataprocess.util import *
 from dataprocess.SpectralData import SpectralDataType
 import unittest

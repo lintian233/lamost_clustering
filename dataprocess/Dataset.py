@@ -93,7 +93,6 @@ class Dataset(ABC):
         )
 
         self.__name = dataset_name
-
         save_path = self.__dir_base_path + dataset_name + ".npy"
 
         np.save(save_path, data_numpy, allow_pickle=True)
