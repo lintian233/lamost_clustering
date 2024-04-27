@@ -1,6 +1,12 @@
+import os
+import glob
+import re
+
 from pandas import DataFrame
 
+
 from .Dataset import Dataset
+from config.config import DATASETBASEPATH
 
 """
 /Data/
@@ -54,3 +60,43 @@ class DataProcess:
         Dataset, 数据集
         """
         raise NotImplementedError("load_dataset method not implemented")
+    
+    @staticmethod
+    def list_datasets() -> DataFrame:
+        """
+        返回所有数据集的列表
+        """
+        base_path = DATASETBASEPATH
+        if base_path[-1] != "/":
+            base_path += "/"
+
+        dataset = []
+        dataset_dirs = glob.glob(base_path + "*Dataset/")
+        for item in dataset_dirs:
+            current = glob.glob(item + "*.npy")
+            dataset.append(current)
+        
+        pattern = r'\\([A-Za-z]+-\d+)-SN(\d+)-STAR(\d+)-QSO(\d+)-GALAXY(\d+)'
+
+        datasets_info = []
+        for item in dataset:
+            info = []
+            for i in item:
+                match = re.search(pattern, i)
+                if match:
+                    info.append(match.group(1))
+                    info.append(match.group(2))
+                    info.append(match.group(3))
+                    info.append(match.group(4))
+                    info.append(match.group(5))
+            datasets_info.append(info)
+        
+        INFO =  DataFrame(datasets_info, columns=["DATASET_NAME", "NUM_SPECTRA", "STAR", "QSO", "GALAXY"])
+        
+        return INFO
+        
+        
+
+
+
+

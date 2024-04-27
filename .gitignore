@@ -4,6 +4,7 @@ __pycache__
 
 *.xmind
 
+data/
 *.fits
 *.fits.gz
 origin_data/*

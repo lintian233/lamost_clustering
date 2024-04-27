@@ -58,9 +58,9 @@ class Dataset(ABC):
         """
         TODO: 返回输出有多少条光谱，每条光谱的大小，每个光谱有多少类。
         FORMAT:
-        CLASS, SUBCLASS, FLUX_SHAPE, WAVELENGTH_SHAPE
+        INDEX ,CLASS, SUBCLASS, FLUX_SHAPE, WAVELENGTH_SHAPE
         """
-        raise NotImplementedError("info method not implemented")
+
 
     def __str__(self) -> DataFrame:
         return self.info()
@@ -96,6 +96,8 @@ class Dataset(ABC):
         save_path = self.__dir_base_path + dataset_name + ".npy"
 
         np.save(save_path, data_numpy, allow_pickle=True)
+
+        return save_path
 
     def to_numpy(self) -> NDArray[Any]:
         """
