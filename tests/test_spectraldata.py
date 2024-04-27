@@ -16,8 +16,8 @@ class TestSpectralData(unittest.TestCase):
     def test_init(self):
         test_data = np.zeros(1, dtype=SpectralDataType)
         test_data["name"] = "test"
-        test_data["flux"] = np.random.rand(3700)
-        test_data["wavelength"] = np.random.rand(3700)
+        test_data["flux"][0] = np.random.rand(6000)
+        test_data["wavelength"][0] = np.random.rand(6000)
         test_data["class"] = "test"
         test_data["subclass"] = "test"
         self.data = SpectralData.from_data(test_data)

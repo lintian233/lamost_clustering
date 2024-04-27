@@ -9,7 +9,7 @@ from pandas import DataFrame
 from astropy.io import fits
 import glob
 
-from .SpectralData import SpectralData
+from .SpectralData import SpectralData, SpectralDataType
 from config.config import DATASETBASEPATH
 from .util import *
 
@@ -20,6 +20,13 @@ class Dataset(ABC):
     __dir_base_path = DATASETBASEPATH
     __name: str
     
+
+    #fortest
+    def change_dir_base_path(self, path: str) -> None:
+        """
+        更改数据集的基础路径，用于测试
+        """
+        self.__dir_base_path = path
 
     def __init__(self) -> None:
         """
@@ -88,10 +95,16 @@ class Dataset(ABC):
 
         self.__dataset = list(results)
 
-        dataset_name = generate_dataset_name(self)
+        data_numpy = self.to_numpy()
+        dataset_name = generate_dataset_name(self.__class__.__name__, 
+                                             self.__dir_base_path, 
+                                             data_numpy)
+        
         self.__name = dataset_name
+        
+        save_path = self.__dir_base_path + dataset_name + '.npy'
 
-        save_dataset(self)
+        np.save(save_path, data_numpy, allow_pickle=True)
     
     def to_numpy(self) -> NDArray[Any]:
         """

@@ -1,6 +1,6 @@
 #这里是存放DataProcess的工具函数的地方
-from .SpectralData import SpectralData, SpectralDataType
-from .Dataset import Dataset
+import importlib
+
 from typing import List, Any
 import re
 import glob
@@ -8,7 +8,7 @@ import glob
 import numpy as np
 from numpy.typing import NDArray
 
-def generate_dataset_name(dataset: Dataset) -> str:
+def generate_dataset_name(class_name: str, base_dir: str, data_numpy:NDArray) -> str:
     """
     生成数据集的名称
     参数：
@@ -16,9 +16,9 @@ def generate_dataset_name(dataset: Dataset) -> str:
     返回：
     str, 数据集的名称
     """
-    dataset_name = dataset.__class__.__name__
-    dataset_index = generate_new_index(dataset.__dir_base_path)
-    dataset_name_base = generate_dataset_name_base(dataset)
+    dataset_name = class_name
+    dataset_index = generate_new_index(base_dir)
+    dataset_name_base = generate_dataset_name_base(data_numpy)
     return f"{dataset_name}-{dataset_index}-{dataset_name_base}"
 
 def parser_fits_path(dirpath: str) -> List[str]:
@@ -40,7 +40,7 @@ def parser_fits_path(dirpath: str) -> List[str]:
     return all_fits_files_path
     
 
-def generate_dataset_name_base(dataset:Dataset) -> str:
+def generate_dataset_name_base(dataset:NDArray) -> str:
     """
     获取数据集的名称
     参数：
@@ -50,9 +50,7 @@ def generate_dataset_name_base(dataset:Dataset) -> str:
     """
     if len(dataset) == 0 : 
         raise ValueError("Dataset is empty")
-
-    dataset = dataset.to_numpy()
-
+    
     total_num = len(dataset)
     star_num = dataset['class'][dataset['class'] == 'STAR'].shape[0]
     yso_num = dataset['class'][dataset['class'] == 'QSO'].shape[0]
@@ -85,22 +83,4 @@ def generate_new_index(dataset_dir:str) -> str:
     return f'{int(max(index_set_list)) + 1:03d}'
 
 
-
-def save_dataset(dataset: Dataset) -> None:
-    """
-    保存数据集到文件
-    参数：
-    dataset_path: str, 数据集的路径
-    dataset: List[SpectralData], 数据集
-    返回：
-    无
-    """
-    if dataset.__name is None:
-        raise ValueError("Dataset name is None")
-    
-    
-    
-    dataset_name = dataset.__name
-    dataset_path = dataset.__dir_base_path + dataset_name + '.npy'
-    np.save(dataset_path, dataset.to_numpy())
     

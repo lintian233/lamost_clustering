@@ -39,7 +39,7 @@ class SpectralData:
 
     @classmethod
     def from_data(cls, data: NDArray[Any]) -> 'SpectralData':
-        return cls(data["name"], data["flux"], data["wavelength"], data["class"], data["subclass"]) 
+        return cls(data["name"], data["flux"][0], data["wavelength"][0], data["class"], data["subclass"]) 
            
 
 
