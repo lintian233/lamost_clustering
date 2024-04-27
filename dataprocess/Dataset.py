@@ -1,27 +1,23 @@
 from abc import ABC, abstractmethod
-from typing import Any, List
 import os
-from concurrent.futures import ThreadPoolExecutor
+from typing import Any, List
 
 import numpy as np
 from numpy.typing import NDArray
 from pandas import DataFrame
-from astropy.io import fits
-import glob
+from concurrent.futures import ThreadPoolExecutor
 
 from .SpectralData import SpectralData, SpectralDataType
 from config.config import DATASETBASEPATH
 from .util import *
 
 
-
 class Dataset(ABC):
     __dataset: List[SpectralData]
     __dir_base_path = DATASETBASEPATH
     __name: str
-    
 
-    #fortest
+    # fortest
     def change_dir_base_path(self, path: str) -> None:
         """
         更改数据集的基础路径，用于测试
@@ -38,28 +34,25 @@ class Dataset(ABC):
             os.makedirs(self.__dir_base_path)
 
         class_name = self.__class__.__name__
-        self.__dir_base_path = self.__dir_base_path + class_name + '/'
+        self.__dir_base_path = self.__dir_base_path + class_name + "/"
         if not os.path.exists(self.__dir_base_path):
             os.makedirs(self.__dir_base_path)
 
         self.__dataset = []
         self.__name = None
-        
 
     def __getitem__(self, idx: int) -> SpectralData:
         """Return the item at the given index"""
         return self.__dataset[idx]
-    
-    
+
     def __len__(self) -> int:
         """Return the number of items in the dataset"""
-        return len(self.__dataset)    
-
+        return len(self.__dataset)
 
     def __iter__(self) -> Any:
         """Return an iterator over the dataset"""
         return iter(self.__dataset)
-    
+
     #
     def info(self) -> DataFrame:
         """
@@ -68,7 +61,6 @@ class Dataset(ABC):
         CLASS, SUBCLASS, FLUX_SHAPE, WAVELENGTH_SHAPE
         """
         raise NotImplementedError("info method not implemented")
-
 
     def __str__(self) -> DataFrame:
         return self.info()
@@ -96,35 +88,33 @@ class Dataset(ABC):
         self.__dataset = list(results)
 
         data_numpy = self.to_numpy()
-        dataset_name = generate_dataset_name(self.__class__.__name__, 
-                                             self.__dir_base_path, 
-                                             data_numpy)
-        
+        dataset_name = generate_dataset_name(
+            self.__class__.__name__, self.__dir_base_path, data_numpy
+        )
+
         self.__name = dataset_name
-        
-        save_path = self.__dir_base_path + dataset_name + '.npy'
+
+        save_path = self.__dir_base_path + dataset_name + ".npy"
 
         np.save(save_path, data_numpy, allow_pickle=True)
-    
+
     def to_numpy(self) -> NDArray[Any]:
         """
         NDArray[SpectralDataType] : 返回一个numpy数组，Any是SpectralDataType类型。
         将数据集转化为numpy数组。
 
         """
-        if self.__name is not None:        
-            datapath = self.__dir_base_path + self.__name + '.npy'
+        if self.__name is not None:
+            datapath = self.__dir_base_path + self.__name + ".npy"
             if os.path.exists(datapath):
                 return np.load(datapath, allow_pickle=True)
-
 
         data_numpy = np.zeros(len(self.__dataset), dtype=SpectralDataType)
         for i, data in enumerate(self.__dataset):
             data_numpy[i] = data.data
 
         return data_numpy
-    
-    
+
     @abstractmethod
     def read_data(self, path: str) -> SpectralData:
         """
@@ -135,4 +125,3 @@ class Dataset(ABC):
         一个SpectralData对象。
         """
         pass
-

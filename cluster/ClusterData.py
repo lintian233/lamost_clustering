@@ -15,19 +15,26 @@ Data/
                                                         -labels.npy
                                                         -hyperparameters.json
 """
+
+
 @dataclass
-class ClusterData():
+class ClusterData:
     data2d: NDArray[np.float64]
     labels: NDArray[np.float64]
     hyperparameters: dict[str, Any]
 
-    def __init__(self, data2d: NDArray[np.float64], labels: NDArray[np.float64], hyperparameters: dict[str, Any]):
+    def __init__(
+        self,
+        data2d: NDArray[np.float64],
+        labels: NDArray[np.float64],
+        hyperparameters: dict[str, Any],
+    ):
         self.data2d = data2d
         self.labels = labels
         self.hyperparameters = hyperparameters
 
     @staticmethod
     def from_cluster_data(cluster_data: "ClusterData") -> "ClusterData":
-        return ClusterData(cluster_data.data2d, cluster_data.labels, cluster_data.hyperparameters)
-
-
+        return ClusterData(
+            cluster_data.data2d, cluster_data.labels, cluster_data.hyperparameters
+        )

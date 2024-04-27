@@ -1,9 +1,5 @@
-from typing import Any, List, Tuple
-
-from numpy.typing import ArrayLike
 from pandas import DataFrame
 
-from .SpectralData import SpectralData
 from .Dataset import Dataset
 
 """
@@ -16,9 +12,8 @@ from .Dataset import Dataset
 
 
 class DataProcess:
-    
     @staticmethod
-    def get_subclass_dataset(dataset:Dataset, subclass: str) -> Dataset:
+    def get_subclass_dataset(dataset: Dataset, subclass: str) -> Dataset:
         """
         TODO :从数据集中获取子类数据集
         参数：
@@ -28,9 +23,9 @@ class DataProcess:
         Dataset, 子类数据集
         """
         raise NotImplementedError("get_subclass_dataset method not implemented")
-    
+
     @staticmethod
-    def get_class_data(dataset:Dataset, _class: str) -> Dataset:
+    def get_class_data(dataset: Dataset, _class: str) -> Dataset:
         """
         TODO :从数据集中获取类数据集
         参数：
@@ -40,7 +35,6 @@ class DataProcess:
         Dataset, 类数据集
         """
         raise NotImplementedError("get_class_data method not implemented")
-    
 
     @staticmethod
     def info_dataset(dataset_name: str = None) -> DataFrame:
@@ -60,5 +54,3 @@ class DataProcess:
         Dataset, 数据集
         """
         raise NotImplementedError("load_dataset method not implemented")
-    
-    

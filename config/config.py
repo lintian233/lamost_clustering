@@ -1,6 +1,3 @@
-#Dataset 数据集目录
+# Dataset 数据集目录
 
 DATASETBASEPATH = "./data/"
-
-
-

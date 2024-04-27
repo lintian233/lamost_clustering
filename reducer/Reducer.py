@@ -8,6 +8,7 @@ from .ReduceData import ReduceData
 
 """
 
+
 class Reducer(ABC):
     reducer: Any
     result_dir: str
@@ -22,18 +23,17 @@ class Reducer(ABC):
         """
         pass
 
-    
     def info_result(self):
         """
         TODO :返回一个所有降维结果的表，
         给出了结果目录下的所有当前方法(PCA/UMAP)->(当前类名)的一个超参数所对应的数据表：
         exp:
-        index method n_cluster random_stat 
+        index method n_cluster random_stat
         1           PCA         50             42
         """
 
         raise NotImplementedError("info_result method not implemented")
-    
+
     def get_result(self, index) -> ReduceData:
         """
         TODO :给定名称，在结果目录文件夹内检索并返回ReduceData

@@ -25,14 +25,21 @@ Data/
                                         -hyperparameters.json
 """
 
+
 @dataclass
-class ReduceData():
+class ReduceData:
     data2d: NDArray[np.float64]
     datand: NDArray[np.float64]
     labels: NDArray[np.float64]
     hyperparameters: dict[str, Any]
 
-    def __init__(self, data2d: NDArray[np.float64], datand: NDArray[np.float64], labels: NDArray[np.float64], hyperparameters: dict[str, Any]):
+    def __init__(
+        self,
+        data2d: NDArray[np.float64],
+        datand: NDArray[np.float64],
+        labels: NDArray[np.float64],
+        hyperparameters: dict[str, Any],
+    ):
         self.data2d = data2d
         self.datand = datand
         self.labels = labels
@@ -40,5 +47,9 @@ class ReduceData():
 
     @staticmethod
     def from_reduce_data(reduce_data: "ReduceData") -> "ReduceData":
-        return ReduceData(reduce_data.data2d, reduce_data.datand, reduce_data.labels, reduce_data.hyperparameters)
-    
+        return ReduceData(
+            reduce_data.data2d,
+            reduce_data.datand,
+            reduce_data.labels,
+            reduce_data.hyperparameters,
+        )

@@ -3,11 +3,11 @@ from typing import Any
 
 from .ClusterData import ClusterData
 
+
 class Cluster(ABC):
     cluster: Any
     result_dir: str
     hyperparameters: dict[str, Any]
-
 
     @abstractmethod
     def cluster(self, data) -> str:
@@ -16,7 +16,6 @@ class Cluster(ABC):
         返回文件路径
         """
         pass
-
 
     def info_result(self) -> None:
         """
@@ -28,8 +27,7 @@ class Cluster(ABC):
 
         """
         raise NotImplementedError("info_result method not implemented")
-    
-    
+
     def get_result(self, index: str) -> ClusterData:
         """
         给定名称，在结果目录文件夹内检索并返回ClusterData
