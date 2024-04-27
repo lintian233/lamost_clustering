@@ -5,10 +5,12 @@ import numpy as np
 from dataprocess import SpectralData, SpectralDataType
 
 
-class TestSpectralData(unittest.TestCase):
 
+class TestSpectralData(unittest.TestCase):
+    data: SpectralData
     def setUp(self) -> None:
-        self.data = SpectralData()
+        # self.data = SpectralData()
+        pass
 
 
     def test_init(self):
@@ -18,7 +20,7 @@ class TestSpectralData(unittest.TestCase):
         test_data["wavelength"] = np.random.rand(3700)
         test_data["class"] = "test"
         test_data["subclass"] = "test"
-        self.data = SpectralData(test_data)
+        self.data = SpectralData.from_data(test_data)
         save_path = r"./tests/file/test.npy"
         
         np.save(save_path, self.data.data)

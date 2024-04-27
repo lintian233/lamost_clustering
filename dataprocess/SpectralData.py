@@ -8,8 +8,8 @@ from dataclasses import dataclass
 
 SpectralDataType = dtype([
     ('name', "U10", (1,)),
-    ('flux', np.float64, (3700,)),
-    ('wavelength', np.float64, (3700,)),
+    ('flux', np.float64, (6000,)),
+    ('wavelength', np.float64, (6000,)),
     ('class', "U10", (1,)),
     ('subclass', "U10", (1,))
 ])
@@ -19,19 +19,28 @@ class SpectralData:
     data: NDArray[Any]
     name: str
 
-    def __init__(self,data: NDArray[Any] = None) -> None:
-        if data is None:
-            self.data = np.zeros(1, dtype=SpectralDataType)
-        else:
-            # Check if data is a numpy array
-            if not isinstance(data, np.ndarray):
-                raise TypeError("data must be a numpy array")
-            # Check if data has the correct dtype
-            if data.dtype != SpectralDataType:
-                raise TypeError("data must have the correct dtype")
-            self.data = data
+    def __init__(self, name, flux, wav, cls, subcls):
+        self.data = np.zeros(1, dtype=SpectralDataType)
+        self.data["name"] = name
+        
+        if len(flux) > 6000:
+            raise ValueError("Flux data too long")
+        if len(wav) > 6000:
+            raise ValueError("Wavelength data too long")
+        self.data["flux"][0][:] = -1
+        self.data["flux"][0][:len(flux)] = flux
+        self.data["wavelength"][0][:] = -1
+        self.data["wavelength"][0][:len(wav)] = wav
 
+        self.data["class"] = cls
+        self.data["subclass"] = subcls
+        
+        self.name = name
 
+    @classmethod
+    def from_data(cls, data: NDArray[Any]) -> 'SpectralData':
+        return cls(data["name"], data["flux"], data["wavelength"], data["class"], data["subclass"]) 
+           
 
 
 

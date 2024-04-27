@@ -7,38 +7,53 @@ import numpy as np
 from numpy.typing import NDArray
 from pandas import DataFrame
 from astropy.io import fits
+import glob
 
 from .SpectralData import SpectralData
 from config.config import DATASETBASEPATH
+from .util import *
 
 
 
 class Dataset(ABC):
     __dataset: List[SpectralData]
     __dir_base_path = DATASETBASEPATH
+    __name: str
+    
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TODO: 初始化Dataset类，初始化一个空的数据集。
         讲_dir_data_path设置为DATA_PATH+dataset_name/
         {dataset_name} 是一个派生类类名
         """
+        if not os.path.exists(self.__dir_base_path):
+            os.makedirs(self.__dir_base_path)
+
+        class_name = self.__class__.__name__
+        self.__dir_base_path = self.__dir_base_path + class_name + '/'
+        if not os.path.exists(self.__dir_base_path):
+            os.makedirs(self.__dir_base_path)
+
+        self.__dataset = []
+        self.__name = None
+        
 
     def __getitem__(self, idx: int) -> SpectralData:
         """Return the item at the given index"""
-        return self.dataset[idx]
+        return self.__dataset[idx]
     
     
     def __len__(self) -> int:
         """Return the number of items in the dataset"""
-        return len(self.dataset)    
+        return len(self.__dataset)    
 
 
     def __iter__(self) -> Any:
         """Return an iterator over the dataset"""
-        return iter(self.dataset)
+        return iter(self.__dataset)
     
-
+    #
     def info(self) -> DataFrame:
         """
         TODO: 返回输出有多少条光谱，每条光谱的大小，每个光谱有多少类。
@@ -66,29 +81,35 @@ class Dataset(ABC):
         __dir_data_path: str
         2. 数据集格式：NDArray[SpectralDataType](定义在SpectralData中)
         """
-        # filenames = os.listdir(dirpath)
-        # spectral_datas = np.empty(len(filenames), dtype=object)
-        # for i, file_name in enumerate(filenames):
-        #     with fits.open(dirpath + file_name) as hdulist:
-        #         spectral_datas[i] = SpectralData(hdulist)
-        # return spectral_datas
-        filenames = os.listdir(dirpath)
-    
+        fits_path = parser_fits_path(dirpath)
 
         with ThreadPoolExecutor() as executor:
-            results = executor.map(self.read_data(), [dirpath + filename for filename in filenames])
-            spectral_datas = list(results)
-    
-        return np.array(spectral_datas, dtype=object)
-    
+            results = executor.map(self.read_data, fits_path)
 
+        self.__dataset = list(results)
+
+        dataset_name = generate_dataset_name(self)
+        self.__name = dataset_name
+
+        save_dataset(self)
+    
     def to_numpy(self) -> NDArray[Any]:
         """
         NDArray[SpectralDataType] : 返回一个numpy数组，Any是SpectralDataType类型。
         将数据集转化为numpy数组。
 
         """
-        raise NotImplementedError("to_numpy method not implemented")
+        if self.__name is not None:        
+            datapath = self.__dir_base_path + self.__name + '.npy'
+            if os.path.exists(datapath):
+                return np.load(datapath, allow_pickle=True)
+
+
+        data_numpy = np.zeros(len(self.__dataset), dtype=SpectralDataType)
+        for i, data in enumerate(self.__dataset):
+            data_numpy[i] = data.data
+
+        return data_numpy
     
     
     @abstractmethod
