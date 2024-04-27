@@ -15,12 +15,20 @@ class TestDataprocessutil(unittest.TestCase):
     
     def setUp(self) -> None:
         clear()
-    def test_genetrate_new_index(self):
         dirpath = r"./tests/file/"
+
+        #如果没有这个文件夹创建一个
+        if not os.path.exists(dirpath):
+            os.makedirs(dirpath)
+        self.dirpath = dirpath
+
+
+    def test_genetrate_new_index(self):
         data = np.zeros(10, dtype=SpectralDataType)
-        np.save(dirpath + "LamostDataset-000-SN100-STAR0-QSO100-GALAXY0.npy", data)
-        index = generate_new_index(dirpath)
+        np.save(self.dirpath + "LamostDataset-000-SNst_generate_new_index.npy", data)
+        index = generate_new_index(self.dirpath)
         self.assertEqual(index, "001")
+        
 
 
 

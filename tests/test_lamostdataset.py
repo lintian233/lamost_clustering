@@ -16,7 +16,6 @@ def clear():
 class TestLamostDataset(unittest.TestCase):
 
     def setUp(self) -> None:
-        clear()
         self.lamost_dataset = LamostDataset()
         self.lamost_dataset.change_dir_base_path(r"./tests/file/")
 

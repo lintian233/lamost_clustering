@@ -20,8 +20,8 @@ class TestSpectralData(unittest.TestCase):
         test_data["wavelength"][0] = np.random.rand(6000)
         test_data["class"] = "test"
         test_data["subclass"] = "test"
-        self.data = SpectralData.from_data(test_data)
-        save_path = r"./tests/file/test.npy"
+        self.data = SpectralData.from_spectral_data(test_data)
+        save_path = r"./tests/file/test_spectral_data.npy"
         
         np.save(save_path, self.data.data)
         self.assertTrue(np.array_equal(self.data.data, test_data))
