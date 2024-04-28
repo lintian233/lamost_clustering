@@ -9,7 +9,7 @@ from pandas import DataFrame
 from .Dataset import Dataset
 from .SpectralData import SpectralData
 from config.config import DATASETBASEPATH
-from .util import find_dataset_path
+from .util import find_dataset_path, generate_dataset_name
 
 """
 /Data/ 
@@ -30,10 +30,12 @@ class DataProcess:
         返回：
         Dataset, 子类数据集
         """
+
         raise NotImplementedError("get_subclass_dataset method not implemented")
+    
 
     @staticmethod
-    def get_class_data(dataset: Dataset, _class: str) -> Dataset:
+    def get_class_dataset(dataset: Dataset, class_name: str) -> Dataset:
         """
         TODO :从数据集中获取类数据集
         参数：
@@ -42,7 +44,19 @@ class DataProcess:
         返回：
         Dataset, 类数据集
         """
-        raise NotImplementedError("get_class_data method not implemented")
+        subdataset = dataset.__class__()
+        
+        sublist = []
+        for item in dataset:
+            if item["class"] == class_name:
+                sublist.append(item)
+
+        subdataset.dataset = sublist
+        subdataset.name = generate_dataset_name(
+            subdataset.__class__.__name__, subdataset.dir_base_path, subdataset.to_numpy()
+        )
+        
+        return subdataset
 
     @staticmethod
     def info_dataset(dataset_index: str = None) -> DataFrame:
@@ -85,7 +99,20 @@ class DataProcess:
         dataset.name = dataset_name
         return dataset
     
-    
+    @staticmethod
+    def save_dataset(dataset: Dataset) -> str:
+        """
+        保存数据集
+        参数：
+        dataset: Dataset, 数据集
+        返回：
+        str, 数据集的路径
+        """
+        numpy_data = dataset.to_numpy()
+        dataset_path = dataset.dir_base_path + dataset.name + ".npy"
+        np.save(dataset_path, numpy_data, allow_pickle=True)
+        return dataset_path
+
     @staticmethod
     def list_datasets() -> DataFrame:
         """

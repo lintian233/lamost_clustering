@@ -13,7 +13,7 @@ from config.config import DATASETBASEPATH
 
 class Dataset(ABC):
     dataset: List[SpectralData]
-    __dir_base_path = DATASETBASEPATH
+    dir_base_path = DATASETBASEPATH
     name: str
 
     # fortest
@@ -21,7 +21,7 @@ class Dataset(ABC):
         """
         更改数据集的基础路径，用于测试
         """
-        self.__dir_base_path = path
+        self.dir_base_path = path
 
     def __init__(self) -> None:
         """
@@ -29,20 +29,23 @@ class Dataset(ABC):
         讲_dir_data_path设置为DATA_PATH+dataset_name/
         {dataset_name} 是一个派生类类名
         """
-        if not os.path.exists(self.__dir_base_path):
-            os.makedirs(self.__dir_base_path)
+        if not os.path.exists(self.dir_base_path):
+            os.makedirs(self.dir_base_path)
 
         class_name = self.__class__.__name__
-        self.__dir_base_path = self.__dir_base_path + class_name + "/"
-        if not os.path.exists(self.__dir_base_path):
-            os.makedirs(self.__dir_base_path)
+        self.dir_base_path = self.dir_base_path + class_name + "/"
+        if not os.path.exists(self.dir_base_path):
+            os.makedirs(self.dir_base_path)
 
         self.dataset = []
         self.name = None
 
-    def __getitem__(self, idx: int) -> SpectralData:
-        """Return the item at the given index"""
-        return self.dataset[idx]
+    def __getitem__(self, key: Any) -> SpectralData: 
+        if isinstance(key, int):
+            return self.dataset[key]
+
+        raise TypeError("Invalid argument type")
+
 
     def __len__(self) -> int:
         """Return the number of items in the dataset"""
@@ -58,7 +61,7 @@ class Dataset(ABC):
         以ArrayLike[SpectralData]的形式存储在self.dataset中。并将这个数据集序列化到__dir_data_path中。
         参数：
         dirpath: str, 数据集的路径
-        dirpath: 下面是*.fits.gz
+        dirpath: 下面是*.fits
         返回：
         无
 
@@ -76,11 +79,11 @@ class Dataset(ABC):
 
         data_numpy = self.to_numpy()
         dataset_name = generate_dataset_name(
-            self.__class__.__name__, self.__dir_base_path, data_numpy
+            self.__class__.__name__, self.dir_base_path, data_numpy
         )
 
         self.name = dataset_name
-        save_path = self.__dir_base_path + dataset_name + ".npy"
+        save_path = self.dir_base_path + dataset_name + ".npy"
 
         np.save(save_path, data_numpy, allow_pickle=True)
 
@@ -93,7 +96,7 @@ class Dataset(ABC):
 
         """
         if self.name is not None:
-            datapath = self.__dir_base_path + self.name + ".npy"
+            datapath = self.dir_base_path + self.name + ".npy"
             if os.path.exists(datapath):
                 return np.load(datapath, allow_pickle=True)
 

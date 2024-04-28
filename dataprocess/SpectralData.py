@@ -21,6 +21,8 @@ SpectralDataType = dtype(
 class SpectralData:
     data: NDArray[Any] 
     name: str
+    class_name: str
+    subclass: str
 
     def __init__(self, name, flux, wav, cls, subcls):
         self.data = np.zeros(1, dtype=SpectralDataType)[0]
@@ -39,6 +41,8 @@ class SpectralData:
         self.data["subclass"] = subcls
 
         self.name = name
+        self.class_name = cls
+        self.subclass = subcls
 
     @classmethod
     def from_numpy(cls, data: NDArray[Any]) -> "SpectralData":
@@ -49,3 +53,9 @@ class SpectralData:
             data["class"],
             data["subclass"],
         )
+    
+    def __getitem__(self, key):
+        key_list = self.data.dtype.names
+        if key not in key_list:
+            raise KeyError(f"{key} not found in {key_list}")
+        return self.data[key]

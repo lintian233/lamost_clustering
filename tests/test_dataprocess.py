@@ -6,6 +6,7 @@ from pandas import DataFrame
 from dataprocess.DataProcess import DataProcess
 from dataprocess.Dataset import Dataset
 from dataprocess.SpectralData import SpectralData, SpectralDataType
+from dataprocess.LamostDataset import LamostDataset
 
 class TestDataProcess(unittest.TestCase):
     def setUp(self) -> None:
@@ -27,5 +28,12 @@ class TestDataProcess(unittest.TestCase):
         numpy_data = np.load("data\LamostDataset\LamostDataset-001-SN100-STAR0-QSO100-GALAXY0.npy", allow_pickle=True)
         self.assertTrue(np.array_equal(result.to_numpy(), numpy_data))
 
-        
+    def test_get_class_dataset(self):
+        dataset = DataProcess.load_dataset("LamostDataset-001")
+        result = DataProcess.get_class_dataset(dataset, "QSO")
+        self.assertEqual(len(result), 100)
+        self.assertIsInstance(result, LamostDataset)
+
+        for data in result:
+            self.assertEqual(data["class"], "QSO")
         
