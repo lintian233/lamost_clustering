@@ -19,21 +19,21 @@ SpectralDataType = dtype(
 
 @dataclass
 class SpectralData:
-    data: NDArray[Any]
+    data: NDArray[Any] 
     name: str
 
     def __init__(self, name, flux, wav, cls, subcls):
-        self.data = np.zeros(1, dtype=SpectralDataType)
+        self.data = np.zeros(1, dtype=SpectralDataType)[0]
         self.data["name"] = name
 
         if len(flux) > 6000:
             raise ValueError("Flux data too long")
         if len(wav) > 6000:
             raise ValueError("Wavelength data too long")
-        self.data["flux"][0][:] = -1
-        self.data["flux"][0][: len(flux)] = flux
-        self.data["wavelength"][0][:] = -1
-        self.data["wavelength"][0][: len(wav)] = wav
+        self.data["flux"][:] = -1
+        self.data["flux"][: len(flux)] = flux
+        self.data["wavelength"][:] = -1
+        self.data["wavelength"][: len(wav)] = wav
 
         self.data["class"] = cls
         self.data["subclass"] = subcls
@@ -41,11 +41,11 @@ class SpectralData:
         self.name = name
 
     @classmethod
-    def from_spectral_data(cls, data: NDArray[Any]) -> "SpectralData":
+    def from_numpy(cls, data: NDArray[Any]) -> "SpectralData":
         return cls(
             data["name"],
-            data["flux"][0],
-            data["wavelength"][0],
+            data["flux"],
+            data["wavelength"],
             data["class"],
             data["subclass"],
         )

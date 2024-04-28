@@ -2,18 +2,20 @@ import os
 import glob
 import re
 
+import numpy as np
 from pandas import DataFrame
 
 
 from .Dataset import Dataset
+from .SpectralData import SpectralData
 from config.config import DATASETBASEPATH
+from .util import find_dataset_path
 
 """
-/Data/
-     - Dataset/
-            - Lamost/
-                    - XXX-SN10000-Q1111-G10000-S9000.npy
-            - SDSS/
+/Data/ 
+    - LamostDataset/
+                    -LamostDataset-XXX-SN10000-Q1111-G10000-S9000.npy
+    - SDSS/
 """
 
 
@@ -43,7 +45,7 @@ class DataProcess:
         raise NotImplementedError("get_class_data method not implemented")
 
     @staticmethod
-    def info_dataset(dataset_name: str = None) -> DataFrame:
+    def info_dataset(dataset_index: str = None) -> DataFrame:
         """
         看一下本地目录文件有没有dataset，有把基本信息读出来。
         INDEX, DATASET_NAME, NUM_SPECTRA, QSO, GALAXY, STAR
@@ -59,8 +61,31 @@ class DataProcess:
         返回：
         Dataset, 数据集
         """
-        raise NotImplementedError("load_dataset method not implemented")
+        telescope = dataset_index.split("-")[0]
 
+        if telescope == "LamostDataset":
+            from .LamostDataset import LamostDataset
+            dataset = LamostDataset()
+        elif telescope == "SDSSDataset":
+            from .SDSSDataset import SDSSDataset
+            dataset = SDSSDataset()
+        else:
+            raise ValueError(f"DatsetType {telescope} not found")
+
+        dataset_path = find_dataset_path(dataset_index)
+
+        dataset_name = dataset_path.split("\\")[-1].split(".")[0]
+        data_numpy = np.load(dataset_path, allow_pickle=True)
+
+        spectrum_data = []
+        for item in data_numpy:
+            spectrum_data.append(SpectralData.from_numpy(item))
+
+        dataset.dataset = spectrum_data
+        dataset.name = dataset_name
+        return dataset
+    
+    
     @staticmethod
     def list_datasets() -> DataFrame:
         """

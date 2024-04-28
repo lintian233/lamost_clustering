@@ -5,6 +5,64 @@ from typing import List, Any
 
 from numpy.typing import NDArray
 
+from config.config import DATASETBASEPATH
+
+def check_dataset_index(dataset_index: str) -> bool:
+    """
+    检查数据集的名称是否合法, 所有合法的数据集名称都是以"Dataset"结尾的，且在dataprocess目录下有对应的类文件
+    参数：
+    dataset_name: str, 数据集的名称
+    返回：
+    bool, 是否合法
+    >>> check_dataset_index("LamostDataset-001")
+    True
+    >>> check_dataset_index("SDSSDataset-002")
+    True
+    >>> check_dataset_index("NONSENDataset-003")
+    False
+    """
+    class_python_files = glob.glob("dataprocess/*Dataset.py")
+    patten = r"\\(\w+Dataset).py"
+    
+    class_names = []
+    for class_python_file in class_python_files:
+        match = re.search(patten, class_python_file)
+        if match:
+            class_names.append(match.group(1))
+    
+
+    telescope = dataset_index.split("-")[0]
+    index = dataset_index.split("-")[1]
+    if telescope in class_names and index.isdigit():
+        return True
+    
+    return False
+
+
+def find_dataset_path(dataset_index: str) -> str:
+    """
+    找到数据集的路径
+    参数：
+    dataset_index: str, 数据集的索引
+    返回：
+    str, 数据集的路径, 如果没有找到raise FileNotFoundError
+    """
+    if not check_dataset_index(dataset_index):
+        raise ValueError("Invalid dataset index format")
+
+    base_path = DATASETBASEPATH
+    if base_path[-1] != "/":
+        base_path += "/"
+    
+    dataset_dirs = glob.glob(base_path + "*Dataset/")
+    for item in dataset_dirs:
+        current = glob.glob(item + "*.npy")
+        for i in current:
+            if dataset_index in i:
+                return i
+    
+    raise FileNotFoundError(f"Dataset {dataset_index} not found")
+
 
 def generate_dataset_name(class_name: str, base_dir: str, data_numpy: NDArray) -> str:
     """

@@ -12,13 +12,13 @@ class TestSpectralData(unittest.TestCase):
         pass
 
     def test_init(self):
-        test_data = np.zeros(1, dtype=SpectralDataType)
+        test_data = np.zeros(1, dtype=SpectralDataType)[0]
         test_data["name"] = "test"
-        test_data["flux"][0] = np.random.rand(6000)
-        test_data["wavelength"][0] = np.random.rand(6000)
+        test_data["flux"] = np.random.rand(6000)
+        test_data["wavelength"] = np.random.rand(6000)
         test_data["class"] = "test"
         test_data["subclass"] = "test"
-        self.data = SpectralData.from_spectral_data(test_data)
+        self.data = SpectralData.from_numpy(test_data)
         save_path = r"./tests/file/test_spectral_data.npy"
 
         np.save(save_path, self.data.data)

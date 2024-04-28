@@ -28,3 +28,9 @@ class TestDataprocessutil(unittest.TestCase):
         np.save(self.dirpath + "LamostDataset-000-SNst_generate_new_index.npy", data)
         index = generate_new_index(self.dirpath)
         self.assertEqual(index, "001")
+
+    def test_check_dataset_index(self):
+        self.assertTrue(check_dataset_index("LamostDataset-001"))
+        self.assertTrue(check_dataset_index("SDSSDataset-002"))
+        self.assertFalse(check_dataset_index("NONSENDataset-003"))
+        
