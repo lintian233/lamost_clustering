@@ -14,7 +14,7 @@ from config.config import DATASETBASEPATH
 def check_dataset_index(dataset_index: str) -> bool:
     """
     检查数据集的索引是否合法，
-    所有合法的数据集索引都应该以数字结尾，并且在数据集目录下有对应的数据文件。
+    所有合法的数据集索引都应该以数字结尾，并且在dataprocess文件夹下有对应的类实现。
 
     参数：
     dataset_index: str, 数据集的索引
@@ -23,11 +23,13 @@ def check_dataset_index(dataset_index: str) -> bool:
     bool, 是否合法
 
     示例：
-    假设文件夹结构如下：
+    文件夹结构如下：
 
-    DATASETBASEPATH = "Data/" \n
-    DATASETBASEPATH/LamostDataset/LamostDataset-000-SN0-STAR0-QSO0-GALAXY0.npy \n
-    DATASETBASEPATH/LamostDataset/LamostDataset-001-SN0-STAR0-QSO0-GALAXY0.npy \n
+    存放类实现的文件夹：
+    dataprocess/ \n
+        -LamostDataset.py \n
+        -SdssDataset.py \n
+
 
     >>> check_dataset_index("LamostDataset-000")
     True
