@@ -2,60 +2,50 @@ import numpy as np
 
 from numpy.typing import NDArray
 from numpy import dtype
-
+from astropy.io.fits.fitsrec import FITS_rec
+from astropy.io.fits.header import Header
 from typing import Any, TypeVar, Generic
 from dataclasses import dataclass
 
-SpectralDataType = dtype(
-    [
-        ("name", "U10", (1,)),
-        ("flux", np.float64, (6000,)),
-        ("wavelength", np.float64, (6000,)),
-        ("class", "U10", (1,)),
-        ("subclass", "U10", (1,)),
-    ]
-)
+# SpectralDataType = dtype(
+#     [
+#         ("name", "U10", (1,)),
+#         ("flux", np.float64, (6000,)),
+#         ("wavelength", np.float64, (6000,)),
+#         ("class", "U10", (1,)),
+#         ("subclass", "U10", (1,)),
+#     ]
+# )
 
+datatype = dtype([
+    ('FLUX', '>f4', (3909,)),          # 大端序32位浮点数
+    ('IVAR', '>f4', (3909,)),
+    ('WAVELENGTH', '>f4', (3909,)),
+    ('ANDMASK', '>f4', (3909,)),
+    ('ORMASK', '>f4', (3909,)),
+    ('NORMALIZATION', '>f4', (3909,))
+])
+
+SpectralDataType = dtype([
+    ("header", "U11520", ()),
+    ("data", datatype, ()),
+])
 
 @dataclass
 class SpectralData:
-    data: NDArray[Any] 
-    name: str
-    class_name: str
-    subclass: str
-
-    def __init__(self, name, flux, wav, cls, subcls):
-        self.data = np.zeros(1, dtype=SpectralDataType)[0]
-        self.data["name"] = name
-
-        if len(flux) > 6000:
-            raise ValueError("Flux data too long")
-        if len(wav) > 6000:
-            raise ValueError("Wavelength data too long")
-        self.data["flux"][:] = -1
-        self.data["flux"][: len(flux)] = flux
-        self.data["wavelength"][:] = -1
-        self.data["wavelength"][: len(wav)] = wav
-
-        self.data["class"] = cls
-        self.data["subclass"] = subcls
-
-        self.name = name
-        self.class_name = cls
-        self.subclass = subcls
+    raw_data: NDArray[Any]
+    header:Header
+    data: FITS_rec
+    
+    def __init__(self, header:Header, data: FITS_rec):
+        self.header = header
+        self.data = data
+        header_str = header.tostring()
+        self.raw_data = np.array([(header_str, data)], dtype=SpectralDataType)[0]
 
     @classmethod
     def from_numpy(cls, data: NDArray[Any]) -> "SpectralData":
-        return cls(
-            data["name"],
-            data["flux"],
-            data["wavelength"],
-            data["class"],
-            data["subclass"],
-        )
+        header = Header.fromstring(data[0])
+        fits_data = FITS_rec(data[1])
+        return cls(header, fits_data)
     
-    def __getitem__(self, key):
-        key_list = self.data.dtype.names
-        if key not in key_list:
-            raise KeyError(f"{key} not found in {key_list}")
-        return self.data[key]

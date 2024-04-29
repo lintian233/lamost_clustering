@@ -4,6 +4,7 @@ import glob
 from typing import List, Any
 
 from numpy.typing import NDArray
+from astropy.io.fits.header import Header
 
 from config.config import DATASETBASEPATH
 
@@ -103,7 +104,7 @@ def generate_dataset_name_base(dataset: NDArray[Any]) -> str:
     """
     获取数据集的名称
     参数：
-    dataset: List[SpectralData], 数据集
+    dataset: NDArra[Any], 数据集
     返回：
     str, 数据集的名称
     """
@@ -111,10 +112,20 @@ def generate_dataset_name_base(dataset: NDArray[Any]) -> str:
         raise ValueError("Dataset is empty")
 
     total_num = len(dataset)
-    star_num = dataset["class"][dataset["class"] == "STAR"].shape[0]
-    yso_num = dataset["class"][dataset["class"] == "QSO"].shape[0]
-    galaxy_num = dataset["class"][dataset["class"] == "GALAXY"].shape[0]
+    header_set = dataset["header"]
+    star_num = 0
+    yso_num = 0
+    galaxy_num = 0
 
+    for header in header_set:
+        obj_class = Header.fromstring(header)["CLASS"]
+        if obj_class == "STAR":
+            star_num += 1
+        elif obj_class == "QSO":
+            yso_num += 1
+        elif obj_class == "GALAXY":
+            galaxy_num += 1
+    
     return f"SN{total_num}-STAR{star_num}-QSO{yso_num}-GALAXY{galaxy_num}"
 
 

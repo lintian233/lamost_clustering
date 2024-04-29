@@ -21,7 +21,7 @@ class TestDataProcess(unittest.TestCase):
         
         self.assertEqual(len(result), 100)
         spectral_data = result[0]
-        self.assertEqual(spectral_data.data.dtype, SpectralDataType)
+        self.assertEqual(spectral_data.raw_data.dtype, SpectralDataType)
         self.assertIsInstance(spectral_data, SpectralData)
         self.assertIsInstance(result, Dataset)
 
@@ -35,5 +35,6 @@ class TestDataProcess(unittest.TestCase):
         self.assertIsInstance(result, LamostDataset)
 
         for data in result:
-            self.assertEqual(data["class"], "QSO")
+            self.assertEqual(data.header["CLASS"], "QSO")
+
         

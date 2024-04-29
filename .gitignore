@@ -3,7 +3,7 @@ __pycache__
 .vscode
 
 *.xmind
-
+.VSCodeCounter
 data/
 *.fits
 *.fits.gz

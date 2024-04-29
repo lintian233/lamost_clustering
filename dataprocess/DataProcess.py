@@ -48,7 +48,7 @@ class DataProcess:
         
         sublist = []
         for item in dataset:
-            if item["class"] == class_name:
+            if item.header["CLASS"] == class_name:
                 sublist.append(item)
 
         subdataset.dataset = sublist
@@ -57,6 +57,7 @@ class DataProcess:
         )
         
         return subdataset
+
 
     @staticmethod
     def info_dataset(dataset_index: str = None) -> DataFrame:

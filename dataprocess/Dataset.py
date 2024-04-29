@@ -102,7 +102,7 @@ class Dataset(ABC):
 
         data_numpy = np.zeros(len(self.dataset), dtype=SpectralDataType)
         for i, data in enumerate(self.dataset):
-            data_numpy[i] = data.data
+            data_numpy[i] = data.raw_data
 
         return data_numpy
     

@@ -30,4 +30,4 @@ class TestLamostDataset(unittest.TestCase):
 
         # get_item
         data = self.lamost_dataset[0]
-        self.assertEqual(data.data.dtype, SpectralDataType)
+        self.assertEqual(data.raw_data.dtype, SpectralDataType)

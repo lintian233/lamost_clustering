@@ -11,10 +11,7 @@ class LamostDataset(Dataset):
             raise FileNotFoundError(f"File {path} not found")
 
         with fits.open(path) as hdulist:
-            name = hdulist[0].header["OBSID"]
-            class_name = hdulist[0].header["CLASS"]
-            subclass = hdulist[0].header["SUBCLASS"]
-            f = hdulist[1].data[0][0]
-            wave = hdulist[1].data[0][2]
-
-        return SpectralData(name, f, wave, class_name, subclass)
+            header = hdulist[0].header
+            fits_data = hdulist[1].data
+            
+        return SpectralData(header, fits_data)
