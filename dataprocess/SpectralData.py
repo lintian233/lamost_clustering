@@ -1,21 +1,12 @@
 import numpy as np
+from dataclasses import dataclass
+from typing import Any
 
 from numpy.typing import NDArray
 from numpy import dtype
 from astropy.io.fits.fitsrec import FITS_rec
 from astropy.io.fits.header import Header
-from typing import Any, TypeVar, Generic
-from dataclasses import dataclass
 
-# SpectralDataType = dtype(
-#     [
-#         ("name", "U10", (1,)),
-#         ("flux", np.float64, (6000,)),
-#         ("wavelength", np.float64, (6000,)),
-#         ("class", "U10", (1,)),
-#         ("subclass", "U10", (1,)),
-#     ]
-# )
 
 # LAMOST_DATA_TYPE
 datatype = dtype(

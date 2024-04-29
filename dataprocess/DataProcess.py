@@ -2,13 +2,13 @@ import os
 import glob
 import re
 
+
 import numpy as np
 from pandas import DataFrame
 
-
+from config.config import DATASETBASEPATH
 from .Dataset import Dataset
 from .SpectralData import SpectralData
-from config.config import DATASETBASEPATH
 from .util import find_dataset_path, generate_dataset_name
 
 """
