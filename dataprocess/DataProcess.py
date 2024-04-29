@@ -133,8 +133,8 @@ class DataProcess:
 
         datasets_info = []
         for item in dataset:
-            info = []
             for i in item:
+                info = []
                 match = re.search(pattern, i)
                 if match:
                     info.append(match.group(1))
@@ -142,7 +142,7 @@ class DataProcess:
                     info.append(match.group(3))
                     info.append(match.group(4))
                     info.append(match.group(5))
-            datasets_info.append(info)
+                datasets_info.append(info)
 
         INFO = DataFrame(
             datasets_info,

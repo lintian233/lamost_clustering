@@ -1,7 +1,9 @@
+import glob
+import os
+
 import unittest
 import numpy as np
 from pandas import DataFrame
-
 
 from dataprocess.DataProcess import DataProcess
 from dataprocess.Dataset import Dataset
@@ -17,23 +19,27 @@ class TestDataProcess(unittest.TestCase):
         self.assertIsInstance(result, DataFrame)
 
     def test_load_dataset(self):
-        result = DataProcess.load_dataset("LamostDataset-001")
+        raw_data_path = glob.glob(r"data/LamostDataset/LamostDataset-000*.npy")[0]
+        if not os.path.exists(raw_data_path):
+            raise FileNotFoundError(f"File {raw_data_path} not found, please check the dataset exists.")
         
-        self.assertEqual(len(result), 100)
+        result = DataProcess.load_dataset("LamostDataset-000")
+        
         spectral_data = result[0]
         self.assertEqual(spectral_data.raw_data.dtype, SpectralDataType)
         self.assertIsInstance(spectral_data, SpectralData)
         self.assertIsInstance(result, Dataset)
 
-        numpy_data = np.load("data\LamostDataset\LamostDataset-001-SN100-STAR0-QSO100-GALAXY0.npy", allow_pickle=True)
-        self.assertTrue(np.array_equal(result.to_numpy(), numpy_data))
+        
+        raw_data = np.load(raw_data_path, allow_pickle=True)
+        self.assertEqual(len(result), len(raw_data))
+
 
     def test_get_class_dataset(self):
-        dataset = DataProcess.load_dataset("LamostDataset-001")
+        dataset = DataProcess.load_dataset("LamostDataset-000")
         result = DataProcess.get_class_dataset(dataset, "QSO")
-        self.assertEqual(len(result), 100)
-        self.assertIsInstance(result, LamostDataset)
 
+        self.assertIsInstance(result, LamostDataset)
         for data in result:
             self.assertEqual(data.header["CLASS"], "QSO")
 

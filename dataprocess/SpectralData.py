@@ -17,6 +17,7 @@ from dataclasses import dataclass
 #     ]
 # )
 
+#LAMOST_DATA_TYPE
 datatype = dtype([
     ('FLUX', '>f4', (3909,)),          # 大端序32位浮点数
     ('IVAR', '>f4', (3909,)),
@@ -28,7 +29,7 @@ datatype = dtype([
 
 SpectralDataType = dtype([
     ("header", "U11520", ()),
-    ("data", datatype, ()),
+    ("data", FITS_rec, ()),
 ])
 
 @dataclass
