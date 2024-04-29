@@ -8,6 +8,7 @@ from astropy.io.fits.header import Header
 
 from config.config import DATASETBASEPATH
 
+
 def check_dataset_index(dataset_index: str) -> bool:
     """
     检查数据集的名称是否合法, 所有合法的数据集名称都是以"Dataset"结尾的，且在dataprocess目录下有对应的类文件
@@ -24,19 +25,18 @@ def check_dataset_index(dataset_index: str) -> bool:
     """
     class_python_files = glob.glob("dataprocess/*Dataset.py")
     patten = r"\\(\w+Dataset).py"
-    
+
     class_names = []
     for class_python_file in class_python_files:
         match = re.search(patten, class_python_file)
         if match:
             class_names.append(match.group(1))
-    
 
     telescope = dataset_index.split("-")[0]
     index = dataset_index.split("-")[1]
     if telescope in class_names and index.isdigit():
         return True
-    
+
     return False
 
 
@@ -54,14 +54,14 @@ def find_dataset_path(dataset_index: str) -> str:
     base_path = DATASETBASEPATH
     if base_path[-1] != "/":
         base_path += "/"
-    
+
     dataset_dirs = glob.glob(base_path + "*Dataset/")
     for item in dataset_dirs:
         current = glob.glob(item + "*.npy")
         for i in current:
             if dataset_index in i:
                 return i
-    
+
     raise FileNotFoundError(f"Dataset {dataset_index} not found")
 
 
@@ -125,7 +125,7 @@ def generate_dataset_name_base(dataset: NDArray[Any]) -> str:
             yso_num += 1
         elif obj_class == "GALAXY":
             galaxy_num += 1
-    
+
     return f"SN{total_num}-STAR{star_num}-QSO{yso_num}-GALAXY{galaxy_num}"
 
 

@@ -32,7 +32,6 @@ class DataProcess:
         """
 
         raise NotImplementedError("get_subclass_dataset method not implemented")
-    
 
     @staticmethod
     def get_class_dataset(dataset: Dataset, class_name: str) -> Dataset:
@@ -45,7 +44,7 @@ class DataProcess:
         Dataset, 类数据集
         """
         subdataset = dataset.__class__()
-        
+
         sublist = []
         for item in dataset:
             if item.header["CLASS"] == class_name:
@@ -53,11 +52,12 @@ class DataProcess:
 
         subdataset.dataset = sublist
         subdataset.name = generate_dataset_name(
-            subdataset.__class__.__name__, subdataset.dir_base_path, subdataset.to_numpy()
+            subdataset.__class__.__name__,
+            subdataset.dir_base_path,
+            subdataset.to_numpy(),
         )
-        
-        return subdataset
 
+        return subdataset
 
     @staticmethod
     def info_dataset(dataset_index: str = None) -> DataFrame:
@@ -80,9 +80,11 @@ class DataProcess:
 
         if telescope == "LamostDataset":
             from .LamostDataset import LamostDataset
+
             dataset = LamostDataset()
         elif telescope == "SDSSDataset":
             from .SDSSDataset import SDSSDataset
+
             dataset = SDSSDataset()
         else:
             raise ValueError(f"DatsetType {telescope} not found")
@@ -99,7 +101,7 @@ class DataProcess:
         dataset.dataset = spectrum_data
         dataset.name = dataset_name
         return dataset
-    
+
     @staticmethod
     def save_dataset(dataset: Dataset) -> str:
         """

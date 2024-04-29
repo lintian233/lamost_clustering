@@ -40,12 +40,11 @@ class Dataset(ABC):
         self.dataset = []
         self.name = None
 
-    def __getitem__(self, key: Any) -> SpectralData: 
+    def __getitem__(self, key: Any) -> SpectralData:
         if isinstance(key, int):
             return self.dataset[key]
 
         raise TypeError("Invalid argument type")
-
 
     def __len__(self) -> int:
         """Return the number of items in the dataset"""
@@ -105,7 +104,6 @@ class Dataset(ABC):
             data_numpy[i] = data.raw_data
 
         return data_numpy
-    
 
     @abstractmethod
     def read_data(self, path: str) -> SpectralData:

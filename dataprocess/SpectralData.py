@@ -17,28 +17,33 @@ from dataclasses import dataclass
 #     ]
 # )
 
-#LAMOST_DATA_TYPE
-datatype = dtype([
-    ('FLUX', '>f4', (3909,)),          # 大端序32位浮点数
-    ('IVAR', '>f4', (3909,)),
-    ('WAVELENGTH', '>f4', (3909,)),
-    ('ANDMASK', '>f4', (3909,)),
-    ('ORMASK', '>f4', (3909,)),
-    ('NORMALIZATION', '>f4', (3909,))
-])
+# LAMOST_DATA_TYPE
+datatype = dtype(
+    [
+        ("FLUX", ">f4", (3909,)),  # 大端序32位浮点数
+        ("IVAR", ">f4", (3909,)),
+        ("WAVELENGTH", ">f4", (3909,)),
+        ("ANDMASK", ">f4", (3909,)),
+        ("ORMASK", ">f4", (3909,)),
+        ("NORMALIZATION", ">f4", (3909,)),
+    ]
+)
 
-SpectralDataType = dtype([
-    ("header", "U11520", ()),
-    ("data", FITS_rec, ()),
-])
+SpectralDataType = dtype(
+    [
+        ("header", "U11520", ()),
+        ("data", FITS_rec, ()),
+    ]
+)
+
 
 @dataclass
 class SpectralData:
     raw_data: NDArray[Any]
-    header:Header
+    header: Header
     data: FITS_rec
-    
-    def __init__(self, header:Header, data: FITS_rec):
+
+    def __init__(self, header: Header, data: FITS_rec):
         self.header = header
         self.data = data
         header_str = header.tostring()
@@ -49,4 +54,3 @@ class SpectralData:
         header = Header.fromstring(data[0])
         fits_data = FITS_rec(data[1])
         return cls(header, fits_data)
-    

@@ -9,11 +9,11 @@ from typing import Any
 存储在一个文件夹内，文件夹名字为目录结构如下。
 Data/
     -ClusterData/
-                -SpectralClustering/
-                                   -XXX-SNxxxx-Qxxx-Gxxx-1/
-                                                        -data2d.npy
-                                                        -labels.npy
-                                                        -hyperparameters.json
+                PCA/
+                    -PCA-001-Lamostdataset-000-PARM-12-2-3-4-5-90-1-4-5/
+                                                                     -data2d.npy
+                                                                     -labels.npy
+                                                                     -hyperparameters.npy
 """
 
 

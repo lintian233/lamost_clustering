@@ -13,5 +13,5 @@ class LamostDataset(Dataset):
         with fits.open(path) as hdulist:
             header = hdulist[0].header
             fits_data = hdulist[1].data
-            
+
         return SpectralData(header, fits_data)

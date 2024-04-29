@@ -23,4 +23,3 @@ class TestLamostDataset(unittest.TestCase):
         data = self.lamost_dataset.to_numpy()
         self.assertEqual(data[0].dtype, SpectralDataType)
         self.assertEqual(data[0][0].dtype, "U11520")
-
