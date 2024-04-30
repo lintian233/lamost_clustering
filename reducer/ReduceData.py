@@ -38,12 +38,5 @@ class ReduceData:
         self.hyperparameters = hyperparameters
 
     @classmethod
-    def from_reduce_data(cls, 
-                         data2d, 
-                         datand, 
-                         labels, 
-                         hyperparameters) -> "ReduceData":
-        return cls(data2d, 
-                   datand, 
-                   labels, 
-                   hyperparameters)
+    def from_reduce_data(cls, data2d, datand, labels, hyperparameters) -> "ReduceData":
+        return cls(data2d, datand, labels, hyperparameters)

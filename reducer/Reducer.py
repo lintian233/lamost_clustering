@@ -5,7 +5,6 @@ from config.config import REDUCEDATAPATH
 from reducer.ReduceData import ReduceData
 
 
-
 """
 
 """
@@ -22,7 +21,7 @@ class Reducer(ABC):
         self.result_dir = REDUCEDATAPATH
 
     @abstractmethod
-    def reduce(self, dataset_index:str) -> str:
+    def reduce(self, dataset_index: str) -> str:
         """
         TODO: 将当前数据集以当前的超参数降维至所需维度，
         然后将结果保存在result_dir中。
