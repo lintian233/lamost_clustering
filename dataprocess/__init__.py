@@ -10,5 +10,12 @@
 #     "LamostDataset",
 #     "SDSSDataset",
 #     "SpectralData",
-
 # ]
+
+
+from .DataProcess import DataProcess
+
+
+__all__ = [
+    "DataProcess",
+]

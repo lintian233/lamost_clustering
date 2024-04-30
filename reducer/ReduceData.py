@@ -10,19 +10,11 @@ from typing import Any
 存储在一个文件夹内，文件夹名字为目录结构如下。
 Data/
     -ReduceData/
-               -UMAP/
-                    -XXX-SNxxxx-Qxxx-Gxxx-1/
-                                        -data2d.npy
-                                        -datand.npy
-                                        -labels.npy
-                                        -hyperparameters.json
-                
-                -PCA/
-                    -XXX-SNxxxx-Qxxx-Gxxx-1/
-                                        -data2d.npy
-                                        -datand.npy
-                                        -labels.npy
-                                        -hyperparameters.json
+        -PCA-001-LAMOSTDataset-001-PARAMS-1-2-3-4-5-6-7-8-9-10/
+            -data2d
+            -datand
+            -labels
+            -hyperparameters
 """
 
 
@@ -45,11 +37,13 @@ class ReduceData:
         self.labels = labels
         self.hyperparameters = hyperparameters
 
-    @staticmethod
-    def from_reduce_data(reduce_data: "ReduceData") -> "ReduceData":
-        return ReduceData(
-            reduce_data.data2d,
-            reduce_data.datand,
-            reduce_data.labels,
-            reduce_data.hyperparameters,
-        )
+    @classmethod
+    def from_reduce_data(cls, 
+                         data2d, 
+                         datand, 
+                         labels, 
+                         hyperparameters) -> "ReduceData":
+        return cls(data2d, 
+                   datand, 
+                   labels, 
+                   hyperparameters)

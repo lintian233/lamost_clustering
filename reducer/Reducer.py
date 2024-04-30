@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from .ReduceData import ReduceData
+from config.config import REDUCEDATAPATH
+from reducer.ReduceData import ReduceData
+
 
 
 """
@@ -10,12 +12,17 @@ from .ReduceData import ReduceData
 
 
 class Reducer(ABC):
+    index: str
     reducer: Any
     result_dir: str
     hyperparameters: dict[str, Any]
+    dimension: int
+
+    def __init__(self) -> None:
+        self.result_dir = REDUCEDATAPATH
 
     @abstractmethod
-    def reduce(self, data) -> str:
+    def reduce(self, dataset_index:str) -> str:
         """
         TODO: 将当前数据集以当前的超参数降维至所需维度，
         然后将结果保存在result_dir中。
