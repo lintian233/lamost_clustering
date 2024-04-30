@@ -45,3 +45,6 @@ class SpectralData:
         header = Header.fromstring(data[0])
         fits_data = FITS_rec(data[1])
         return cls(header, fits_data)
+
+    def __getitem__(self, key: str) -> Any:
+        return self.header[key]

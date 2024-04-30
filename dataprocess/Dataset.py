@@ -108,7 +108,7 @@ class Dataset(ABC):
     @abstractmethod
     def read_data(self, path: str) -> SpectralData:
         """
-        TODO : 派生类需要实现的方法，根据特定数据格式读取一条光谱数据。
+        派生类需要实现的方法，根据特定数据格式读取一条光谱数据。
         参数：
         path: str, 数据集的路径
         返回：

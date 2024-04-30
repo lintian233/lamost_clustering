@@ -1,4 +1,5 @@
 import os
+
 from astropy.io import fits
 
 from .SpectralData import SpectralData

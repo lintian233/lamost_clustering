@@ -23,9 +23,7 @@ def check_dataset_index(dataset_index: str) -> bool:
     bool, 是否合法
 
     示例：
-    文件夹结构如下：
-
-    存放类实现的文件夹：
+    存放类实现的文件夹：\n
     dataprocess/ \n
         -LamostDataset.py \n
         -SdssDataset.py \n
@@ -86,7 +84,7 @@ def find_dataset_path(dataset_index: str) -> str:
     """
 
     if not check_dataset_index(dataset_index):
-        raise ValueError("Invalid dataset index format")
+        raise ValueError(f"Invalid dataset index format:{dataset_index}")
 
     base_path = DATASETBASEPATH
     if base_path[-1] != "/":
@@ -107,7 +105,7 @@ def generate_dataset_name(class_name: str, base_dir: str, data_numpy: NDArray) -
     生成数据集的名称
 
     参数：
-    dataset_name: str, 数据集的基础名称
+    dataset_name: str, 数据集的类名称
     base_dir: str, 数据集的存储路径
     data_numpy: NDArray[Any], 数据集的numpy数组
 
@@ -200,7 +198,7 @@ def generate_dataset_name_base(dataset: NDArray[Any]) -> str:
 
 def generate_new_index(dataset_dir: str) -> str:
     """
-    这个函数用于生成新的数据集索引。
+    用于生成新的数据集索引。
 
     注意：
     此函数用于生成新的数据集索引，索引是根据目录下已有的数据集文件的index加一得到的。

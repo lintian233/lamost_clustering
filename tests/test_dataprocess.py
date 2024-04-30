@@ -30,6 +30,12 @@ class TestDataProcess(unittest.TestCase):
         spectral_data = result[0]
         raw_data = np.load(raw_data_path, allow_pickle=True)
 
+        try:
+            bad_result = DataProcess.load_dataset("NonsenDataset-000")
+
+        except ValueError as e:
+            self.assertEqual(str(e), "DatsetType NonsenDataset not found")
+
         self.assertEqual(spectral_data.raw_data.dtype, SpectralDataType)
         self.assertIsInstance(spectral_data, SpectralData)
         self.assertIsInstance(result, Dataset)
