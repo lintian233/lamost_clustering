@@ -16,8 +16,8 @@ class TestUtil(unittest.TestCase):
 
     def test_show_spectraldata(self):
         dataset = DataProcess.load_dataset("LamostDataset-000")
-        data = dataset[0]
 
+        data = dataset[0]
         show_spectraldata(data)
 
         self.assertTrue(True)

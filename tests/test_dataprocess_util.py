@@ -35,3 +35,4 @@ class TestDataprocessutil(unittest.TestCase):
         self.assertTrue(check_dataset_index("LamostDataset-001"))
         self.assertTrue(check_dataset_index("SDSSDataset-002"))
         self.assertFalse(check_dataset_index("NONSENDataset-003"))
+        self.assertFalse(check_dataset_index("LamostDataset-00a"))

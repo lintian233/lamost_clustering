@@ -55,7 +55,7 @@ def check_dataset_index(dataset_index: str) -> bool:
 
 def find_dataset_path(dataset_index: str) -> str:
     """
-    找到数据集的路径, 如果没有找到则抛出 FileNotFoundError 异常。
+    找到数据集的路径
     DTATASET_BASE_PATH 在config/config.py中定义。
     DATASET_BASE_PATH 下数据集的文件夹以"Dataset"结尾。
     数据集以"DATASET_NAME-INDEX-SN0-STAR0-QSO0-GALAXY0.npy"的格式命名。
@@ -127,7 +127,7 @@ def generate_dataset_name(class_name: str, base_dir: str, data_numpy: NDArray) -
 
 def parser_fits_path(dirpath: str) -> List[str]:
     """
-    这个函数解析给定目录中的FITS文件的路径。
+    解析给定目录中的FITS文件的路径。
 
     参数:
     dirpath (str): 要搜索FITS文件的目录的路径。
@@ -156,7 +156,7 @@ def parser_fits_path(dirpath: str) -> List[str]:
 
 def generate_dataset_name_base(dataset: NDArray[Any]) -> str:
     """
-    这个函数用于获取数据集的名称。
+    用于获取数据集的名称。
 
     注意:
     数据集名称的生成规则是根据数据集中各类别样本的数量，

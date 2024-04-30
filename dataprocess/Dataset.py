@@ -16,24 +16,17 @@ class Dataset(ABC):
     dir_base_path = DATASETBASEPATH
     name: str
 
-    # fortest
-    def change_dir_base_path(self, path: str) -> None:
-        """
-        更改数据集的基础路径，用于测试
-        """
-        self.dir_base_path = path
-
     def __init__(self) -> None:
-        """
-        TODO: 初始化Dataset类，初始化一个空的数据集。
-        讲_dir_data_path设置为DATA_PATH+dataset_name/
-        {dataset_name} 是一个派生类类名
-        """
         if not os.path.exists(self.dir_base_path):
             os.makedirs(self.dir_base_path)
 
+        if self.dir_base_path[-1] != "/":
+            self.dir_base_path += "/"
+
+        # dir_base_path = DATASETBASEPATH/ClassName/
         class_name = self.__class__.__name__
         self.dir_base_path = self.dir_base_path + class_name + "/"
+
         if not os.path.exists(self.dir_base_path):
             os.makedirs(self.dir_base_path)
 
@@ -54,20 +47,20 @@ class Dataset(ABC):
         """Return an iterator over the dataset"""
         return iter(self.dataset)
 
-    def add_dataset(self, dirpath: str) -> NDArray:
+    def add_dataset(self, dirpath: str) -> str:
         """
-        TODO : 解析数据集文件夹，使用read_data函数， 读取数据集中的所有数据。
-        以ArrayLike[SpectralData]的形式存储在self.dataset中。并将这个数据集序列化到__dir_data_path中。
+        从给定目录中读取数据集，并将其添加到数据集中。
+
         参数：
         dirpath: str, 数据集的路径
-        dirpath: 下面是*.fits
-        返回：
-        无
 
-        序列化的数据集文件格式：
-        1. 数据集的路径
-        __dir_data_path: str
-        2. 数据集格式：NDArray[SpectralDataType](定义在SpectralData中)
+        返回：
+        str, 数据集的保存路径
+
+        示例：
+        Data/Fits/中有多个FITS文件
+        >>> add_dataset("Data/Fits/")
+        'DATSETBASEPATH/XXXDataset/XXXDataset-XXX-SNXXX-STARXXX-QSOXXX-GALAXYXXX.npy'
         """
         fits_path = parser_fits_path(dirpath)
 
@@ -90,9 +83,11 @@ class Dataset(ABC):
 
     def to_numpy(self) -> NDArray[Any]:
         """
-        NDArray[SpectralDataType] : 返回一个numpy数组，Any是SpectralDataType类型。
-        将数据集转化为numpy数组。
+        将数据集转换为numpy数组。
 
+        返回：
+        NDArray, 数据集的numpy数组
+        NDArray的dtype是SpectralDataType
         """
         if self.name is not None:
             datapath = self.dir_base_path + self.name + ".npy"
@@ -108,7 +103,7 @@ class Dataset(ABC):
     @abstractmethod
     def read_data(self, path: str) -> SpectralData:
         """
-        派生类需要实现的方法，根据特定数据格式读取一条光谱数据。
+        派生类需要实现的方法，根据FITS文件路径读取一条光谱数据。
         参数：
         path: str, 数据集的路径
         返回：

@@ -1,5 +1,6 @@
 import glob
 import os
+import time
 
 import unittest
 import numpy as np
@@ -48,3 +49,34 @@ class TestDataProcess(unittest.TestCase):
         self.assertIsInstance(result, LamostDataset)
         for data in result:
             self.assertEqual(data.header["CLASS"], "QSO")
+
+    @unittest.skip("Skip this test. it will take a long time to run.")
+    def test_dataprocess_time(self):
+        NUM = 1000000
+        LODER = 100  # 加载数据集的次数
+        start_time = time.time()
+
+        for i in range(LODER):
+            dataset = DataProcess.load_dataset("LamostDataset-000")
+
+        end_time = time.time()
+        print(f"Load dataset time: {end_time - start_time} seconds")
+
+        dataset = DataProcess.load_dataset("LamostDataset-000")
+        numpy_dataset = np.array(dataset.dataset)
+
+        # 测量遍历Python列表的时间
+        start_time = time.time()
+        for i in range(NUM):
+            for item in dataset:
+                pass
+        end_time = time.time()
+        print(f"Python list iteration time: {end_time - start_time} seconds")
+
+        # 测量遍历NumPy数组的时间
+        start_time = time.time()
+        for i in range(NUM):
+            for item in numpy_dataset:
+                pass
+        end_time = time.time()
+        print(f"NumPy array iteration time: {end_time - start_time} seconds")
