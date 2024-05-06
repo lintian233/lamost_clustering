@@ -1,5 +1,8 @@
-from .Reducer import Reducer
 from sklearn.manifold import TSNE
+
+from .Reducer import Reducer
+import dataprocess.DataProcess as dp
+import numpy as np
 
 
 class TSNEReducer(Reducer):
@@ -15,10 +18,14 @@ class TSNEReducer(Reducer):
             "n_iter": n_iter,
         }
 
-    def reduce(self, data) -> str:
+    def reduce(self, dataset_index: str) -> str:
         """
         实现TSNE降维，将降维结果保存在result_dir中
         """
+        dataset = dp.load_dataset(dataset_index)
+        data = np.zeros((len(dataset), 3000))
+        for i in range(len(dataset)):
+            data[i] = dataset[i].data[0][0][:3000]
         reduce_data = self.reducer(
             n_components=self.dimension,
             perplexity=self.hyperparameters["perplexity"],

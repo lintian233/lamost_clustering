@@ -1,5 +1,8 @@
-from .Reducer import Reducer
 import umap
+import numpy as np
+
+from .Reducer import Reducer
+import dataprocess.DataProcess as dp
 
 
 class UMAPReducer(Reducer):
@@ -21,10 +24,14 @@ class UMAPReducer(Reducer):
             "min_dist": min_dist,
         }
 
-    def reduce(self, data) -> str:
+    def reduce(self, dataset_index: str) -> str:
         """
         实现UMAP降维，将降维结果保存在result_dir中
         """
+        dataset = dp.load_dataset(dataset_index)
+        data = np.zeros((len(dataset), 3000))
+        for i in range(len(dataset)):
+            data[i] = dataset[i].data[0][0][:3000]
         reduce_data = self.reducer(
             n_components=self.dimension,
             n_neighbors=self.hyperparameters["n_neighbors"],

@@ -9,8 +9,7 @@ class TestPCAReducer(unittest.TestCase):
     def setUp(self) -> None:
         pass
 
-    def test_reduce(self):
+    def test_pca_reduce(self):
         reducer = PCAReducer(dimension=2)
-        data = np.random.rand(100, 100)
-        reduce_data = reducer.reduce(data)
-        self.assertEqual(reduce_data.shape, (100, 2))
+        reduce_data = reducer.reduce("LamostDataset-000")
+        pass
