@@ -3,7 +3,6 @@ from sklearn.decomposition import PCA
 import numpy as np
 from numpy.typing import NDArray
 
-from dataprocess import DataProcess as dp
 from .Reducer import Reducer
 import dataprocess.DataProcess as dp
 
