@@ -44,7 +44,7 @@ class TSNEReducer(Reducer):
             return ReduceData
 
         data, classes, subclasses, obsid = get_data_from_dataset_index(dataset_index)
-        
+
         reduce_data = self.reducer(
             n_components=self.dimension,
             perplexity=self.hyperparameters["perplexity"],

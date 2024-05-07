@@ -23,10 +23,10 @@ class PCAReducer(Reducer):
         """
         实现PCA降维，将降维结果保存在result_dir中
         """
-        save_name = get_save_name('PCA', {'n_components': self.dimension})
+        save_name = get_save_name("PCA", {"n_components": self.dimension})
 
-        if os.path.exists(self.result_dir + dataset_index + '/' + save_name):
-            result = np.load(self.result_dir + dataset_index + '/' + save_name)
+        if os.path.exists(self.result_dir + dataset_index + "/" + save_name):
+            result = np.load(self.result_dir + dataset_index + "/" + save_name)
             ReduceData.from_numpy(*result)
             return ReduceData
 
@@ -42,10 +42,10 @@ class PCAReducer(Reducer):
         result[2] = classes
         result[3] = subclasses
         result[4] = obsid
-        
+
         if not os.path.exists(self.result_dir + dataset_index):
             os.makedirs(self.result_dir + dataset_index)
-        np.save(self.result_dir + dataset_index + '/' + save_name, result)
+        np.save(self.result_dir + dataset_index + "/" + save_name, result)
 
         result = ReduceData.from_numpy(*result)
 

@@ -34,7 +34,7 @@ class ReduceData:
         datand: NDArray[np.float64],
         classes: NDArray[np.str_],
         subclasses: NDArray[np.str_],
-        obsid: NDArray[np.str_]
+        obsid: NDArray[np.str_],
     ):
         self.data2d = data2d
         self.datand = datand
