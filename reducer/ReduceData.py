@@ -22,21 +22,24 @@ Data/
 class ReduceData:
     data2d: NDArray[np.float64]
     datand: NDArray[np.float64]
-    labels: NDArray[np.float64]
-    hyperparameters: dict[str, Any]
+    classes: NDArray[np.str_]
+    subclasses: NDArray[np.str_]
+    obsid: NDArray[np.str_]
 
     def __init__(
         self,
         data2d: NDArray[np.float64],
         datand: NDArray[np.float64],
-        labels: NDArray[np.float64],
-        hyperparameters: dict[str, Any],
+        classes: NDArray[np.str_],
+        subclasses: NDArray[np.str_],
+        obsid: NDArray[np.str_]
     ):
         self.data2d = data2d
         self.datand = datand
-        self.labels = labels
-        self.hyperparameters = hyperparameters
+        self.classes = classes
+        self.subclasses = subclasses
+        self.obsid = obsid
 
     @classmethod
-    def from_reduce_data(cls, data2d, datand, labels, hyperparameters) -> "ReduceData":
-        return cls(data2d, datand, labels, hyperparameters)
+    def from_numpy(cls, data2d, datand, classes, subclasses, obsid) -> "ReduceData":
+        return cls(data2d, datand, classes, subclasses, obsid)

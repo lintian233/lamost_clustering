@@ -10,6 +10,6 @@ class TestPCAReducer(unittest.TestCase):
         pass
 
     def test_pca_reduce(self):
-        reducer = PCAReducer(dimension=2)
-        reduce_data = reducer.reduce("LamostDataset-000")
+        reducer = PCAReducer(dimension=50)
+        result = reducer.reduce("LamostDataset-000")
         pass

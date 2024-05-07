@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
+import os
 
 from config.config import REDUCEDATAPATH
 from reducer.ReduceData import ReduceData
@@ -19,6 +20,8 @@ class Reducer(ABC):
 
     def __init__(self) -> None:
         self.result_dir = REDUCEDATAPATH
+        if not os.path.exists(self.result_dir):
+            os.makedirs(self.result_dir)
 
     @abstractmethod
     def reduce(self, dataset_index: str) -> str:
