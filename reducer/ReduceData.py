@@ -10,11 +10,13 @@ from typing import Any
 存储在一个文件夹内，文件夹名字为目录结构如下。
 Data/
     -ReduceData/
-        -PCA-001-LAMOSTDataset-001-PARAMS-1-2-3-4-5-6-7-8-9-10/
-            -data2d
-            -datand
-            -labels
-            -hyperparameters
+        LAMOSTDataset-001/
+            -PCA-hyperparameters
+                -data2d
+                -datand
+                -class
+                -subclass
+                -obsid
 """
 
 
