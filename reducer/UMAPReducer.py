@@ -45,8 +45,11 @@ class UMAPReducer(Reducer):
             },
         )
 
-        if os.path.exists(self.result_dir + dataset_index + "/" + save_name):
-            result = np.load(self.result_dir + dataset_index + "/" + save_name)
+        if os.path.exists(self.result_dir + dataset_index + "/" + save_name + ".npy"):
+            result = np.load(
+                self.result_dir + dataset_index + "/" + save_name + ".npy",
+                allow_pickle=True,
+            )
             ReduceData.from_numpy(*result)
             return ReduceData
 
@@ -58,6 +61,7 @@ class UMAPReducer(Reducer):
             metric=self.hyperparameters["metric"],
             learning_rate=self.hyperparameters["learning_rate"],
             min_dist=self.hyperparameters["min_dist"],
+            n_jobs=-1,
         ).fit_transform(data)
 
         data2d = get_data2d(dataset_index)

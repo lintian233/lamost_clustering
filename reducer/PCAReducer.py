@@ -25,8 +25,11 @@ class PCAReducer(Reducer):
         """
         save_name = get_save_name("PCA", {"n_components": self.dimension})
 
-        if os.path.exists(self.result_dir + dataset_index + "/" + save_name):
-            result = np.load(self.result_dir + dataset_index + "/" + save_name)
+        if os.path.exists(self.result_dir + dataset_index + "/" + save_name + ".npy"):
+            result = np.load(
+                self.result_dir + dataset_index + "/" + save_name + ".npy",
+                allow_pickle=True,
+            )
             ReduceData.from_numpy(*result)
             return ReduceData
 
