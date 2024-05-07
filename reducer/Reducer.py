@@ -130,14 +130,9 @@ class Reducer(ABC):
             ],
         )
 
-        print("PCA redeuce data:")
-        print(PCA_df.to_string(index=False))
+        combineed_df = pd.concat([PCA_df, TSNE_df, UMAP_df], ignore_index=True)
 
-        print("TSNE reduce data:")
-        print(TSNE_df.to_string(index=False))
-
-        print("UMAP reduce data:")
-        print(UMAP_df.to_string(index=False))
+        print(combineed_df.to_string(index=False))
 
         return PCA_files + TSNE_files + UMAP_files
 

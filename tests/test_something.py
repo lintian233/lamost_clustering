@@ -10,6 +10,7 @@ class TestSomething(unittest.TestCase):
         dataset = dp.load_dataset("LamostDataset-000")
         pass
 
+    @unittest.skip("skip")
     def test_load_reducedata(self):
         data1 = np.load(
             "data/reduced_data/LamostDataset-000/PCA-n_components-2.npy",

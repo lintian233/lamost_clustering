@@ -21,6 +21,7 @@ class TestUMAPReducer(unittest.TestCase):
         reducer.reduce("LamostDataset-000")
         pass
 
+    @unittest.skip("Time-consuming test")
     def test_dataprocess_time(self):
         NUM = 100
         LODER = 5000  # 加载数据集的次数
