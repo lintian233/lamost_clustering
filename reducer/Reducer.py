@@ -26,7 +26,7 @@ class Reducer(ABC):
         self.result_dir = REDUCEDATAPATH
         if not os.path.exists(self.result_dir):
             os.makedirs(self.result_dir)
-        self.all_result = self.info_result()
+        self.all_result = ''
 
     @abstractmethod
     def reduce(self, dataset_index: str) -> ReduceData:
@@ -134,7 +134,9 @@ class Reducer(ABC):
 
         print(combineed_df.to_string(index=False))
 
-        return PCA_files + TSNE_files + UMAP_files
+        self.all_result = PCA_files + TSNE_files + UMAP_files
+
+        return combineed_df
 
     def get_result(self, index) -> ReduceData:
         """
