@@ -29,18 +29,25 @@ class Reducer(ABC):
         self.all_result = self.info_result()
 
     @abstractmethod
-    def reduce(self, dataset_index: str) -> str:
+    def reduce(self, dataset_index: str) -> ReduceData:
         """
-        TODO: 将当前数据集以当前的超参数降维至所需维度，
-        然后将结果保存在result_dir中。
-        完成后返回文件路径
+        根据数据集的索引进行降维
+        将降维结果保存在result_dir中
+        返回ReduceData对象
+        此方法需要在子类中实现
         """
+
         pass
 
     def info_result(self):
         """
-        TODO :返回一个所有降维结果的表，
-        给出了结果目录下的所有当前方法(PCA/UMAP)->(当前类名)的一个超参数所对应的数据表：
+        读写result_dir下所有的降维结果
+        将结果打印并返回
+
+        返回：
+        List[List[int, str]]
+        每个元素是一个列表
+        列表中包含了一个降维结果的索引和对应文件名
         """
         PCA_data = []
         PCA_files = []
@@ -50,36 +57,52 @@ class Reducer(ABC):
         UMAP_files = []
         index = 0
         for dir in os.listdir(self.result_dir):
+
             for file in os.listdir(self.result_dir + dir):
+
                 if file.startswith("PCA"):
                     splits = file[:-4].split("-")
                     new_splits = []
+
                     for i in range(0, len(splits)):
+
                         if i % 2 == 0:
                             new_splits.append(splits[i])
+
                     PCA_data.append([index, dir] + new_splits)
                     PCA_files.append([index, self.result_dir + dir + "/" + file])
+
                 elif file.startswith("TSNE"):
+
                     splits = file[:-4].split("-")
                     new_splits = []
+
                     for i in range(0, len(splits)):
+
                         if i % 2 == 0:
                             new_splits.append(splits[i])
+
                     TSNE_data.append([index, dir] + new_splits)
                     TSNE_files.append([index, self.result_dir + dir + "/" + file])
+
                 elif file.startswith("UMAP"):
                     splits = file[:-4].split("-")
                     new_splits = []
+
                     for i in range(0, len(splits)):
+
                         if i % 2 == 0:
                             new_splits.append(splits[i])
+
                     UMAP_data.append([index, dir] + new_splits)
                     UMAP_files.append([index, self.result_dir + dir + "/" + file])
+
                 index += 1
 
         PCA_df = pd.DataFrame(
             PCA_data, columns=["index", "Dataset", "method", "n_components"]
         )
+
         TSNE_df = pd.DataFrame(
             TSNE_data,
             columns=[
@@ -92,6 +115,7 @@ class Reducer(ABC):
                 "n_iter",
             ],
         )
+
         UMAP_df = pd.DataFrame(
             UMAP_data,
             columns=[
@@ -105,18 +129,24 @@ class Reducer(ABC):
                 "min_dist",
             ],
         )
+
         print("PCA redeuce data:")
         print(PCA_df.to_string(index=False))
+
         print("TSNE reduce data:")
         print(TSNE_df.to_string(index=False))
+
         print("UMAP reduce data:")
         print(UMAP_df.to_string(index=False))
+
         return PCA_files + TSNE_files + UMAP_files
 
     def get_result(self, index) -> ReduceData:
         """
-        TODO :给定名称，在结果目录文件夹内检索并返回ReduceData
+        根据索引获取降维结果
+        返回对应降维结果的ReduceData对象
         """
+
         for item in self.all_result:
             if item[0] == index:
                 return get_reduce_data(item[1])

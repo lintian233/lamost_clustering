@@ -6,17 +6,17 @@ from typing import Any
 
 
 """
-因为ReduceData的二维和n维数组非常的大，对于data2d,datand,labels,用npy储存,超参数列表用json储存
-存储在一个文件夹内，文件夹名字为目录结构如下。
-Data/
-    -ReduceData/
-        LAMOSTDataset-001/
-            -PCA-hyperparameters
-                -data2d
-                -datand
-                -class
-                -subclass
-                -obsid
+每一次降维的结果都会保存在result_dir/data_index/下
+文件名为method-超参数1-值1-超参数2-值2.npy
+
+dir/
+    LAMOSTDataset-001/
+        -PCA-hyperparameters
+            -data2d
+            -datand
+            -class
+            -subclass
+            -obsid
 """
 
 
@@ -44,4 +44,8 @@ class ReduceData:
 
     @classmethod
     def from_numpy(cls, data2d, datand, classes, subclasses, obsid) -> "ReduceData":
+        """
+        从numpy数组中创建ReduceData对象
+        """
+
         return cls(data2d, datand, classes, subclasses, obsid)
