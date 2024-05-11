@@ -31,7 +31,7 @@ def get_data_from_dataset_index(dataset_index: str) -> tuple:
     obsid = np.full(len(dataset), "0", dtype="U15")
 
     for i in range(len(dataset)):
-        data[i] = dataset[i].data[0][0][:3000]  # FIX
+        data[i] = dataset[i].data.FLUX[0][0:3000]
 
     for i in range(len(dataset)):
         classes[i] = dataset[i].header["CLASS"]
