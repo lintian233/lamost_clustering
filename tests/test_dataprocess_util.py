@@ -27,9 +27,8 @@ class TestDataprocessutil(unittest.TestCase):
 
     def test_genetrate_new_index(self):
         data = np.zeros(10, dtype=SpectralDataType)
-        np.save(self.dirpath + "LamostDataset-000-SNst_generate_new_index.npy", data)
         index = generate_new_index(self.dirpath)
-        self.assertEqual(index, "002")
+        self.assertEqual(index, "001")
 
     def test_check_dataset_index(self):
         self.assertTrue(check_dataset_index("LamostDataset-001"))

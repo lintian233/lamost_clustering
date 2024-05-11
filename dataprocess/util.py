@@ -209,8 +209,8 @@ def generate_new_index(dataset_dir: str) -> str:
     假设目录路径为 "Data/Dataset/Lamost"
 
     在 "Data/Dataset/Lamost/" 目录下有如下文件：
-    "Data/Dataset/Lamost/LamostDataset-001-SN0-STAR0-QSO0-GALAXY0.npy"
-    "Data/Dataset/Lamost/LamostDataset-002-SN0-STAR0-QSO0-GALAXY0.npy"
+    "Data/Dataset/Lamost/LamostDataset-001-SN0-STAR0-QSO0-GALAXY0.fits"
+    "Data/Dataset/Lamost/LamostDataset-002-SN0-STAR0-QSO0-GALAXY0.fits"
     >>> generate_new_index(dirpath)
     '003'
     """
@@ -219,7 +219,7 @@ def generate_new_index(dataset_dir: str) -> str:
     if dataset_dir[-1] != "/":
         dataset_dir += "/"
 
-    dataset_files = glob.glob(dataset_dir + "*.npy")
+    dataset_files = glob.glob(dataset_dir + "*.fits")
 
     patten_index = r"(\d+)-SN"
     for dataset_file in dataset_files:

@@ -31,7 +31,7 @@ def show_spectraldata(data: SpectralData) -> None:
     # ax2.legend(loc="upper right")
     # Adjust subplots to fit the figure a
     plt.tight_layout()
-    plt.show()
+    # plt.show()
 
 
 def show_reduce_data(data: ReduceData) -> None:
