@@ -5,6 +5,7 @@ from typing import Any, List
 import numpy as np
 from numpy.typing import NDArray
 from concurrent.futures import ThreadPoolExecutor
+from astropy.io import fits
 
 from .SpectralData import SpectralData, SpectralDataType
 from .util import parser_fits_path, generate_dataset_name
@@ -60,7 +61,7 @@ class Dataset(ABC):
         示例：
         Data/Fits/中有多个FITS文件
         >>> add_dataset("Data/Fits/")
-        'DATSETBASEPATH/XXXDataset/XXXDataset-XXX-SNXXX-STARXXX-QSOXXX-GALAXYXXX.npy'
+        'DATSETBASEPATH/XXXDataset/XXXDataset-XXX-SNXXX-STARXXX-QSOXXX-GALAXYXXX.fits'
         """
         fits_path = parser_fits_path(dirpath)
 
@@ -69,41 +70,28 @@ class Dataset(ABC):
 
         self.dataset = list(results)
 
-        data_numpy = self.to_numpy()
+        labels_list = np.array([i.CLASS for i in self.dataset])
+
         dataset_name = generate_dataset_name(
-            self.__class__.__name__, self.dir_base_path, data_numpy
+            self.__class__.__name__, self.dir_base_path, labels_list
         )
 
         self.name = dataset_name
-        save_path = self.dir_base_path + dataset_name + ".npy"
+        save_path = self.dir_base_path + dataset_name + ".fits"
 
-        np.save(save_path, data_numpy, allow_pickle=True)
+        with fits.HDUList() as hdulist:
+            for data in self.dataset:
+                hdulist.append(data.hdul[0])
+                hdulist.append(data.hdul[1])
+
+            hdulist.writeto(save_path, overwrite=True, output_verify="ignore")
 
         return save_path
-
-    def to_numpy(self) -> NDArray[Any]:
-        """
-        将数据集转换为numpy数组。
-
-        返回：
-        NDArray, 数据集的numpy数组
-        NDArray的dtype是SpectralDataType
-        """
-        if self.name is not None:
-            datapath = self.dir_base_path + self.name + ".npy"
-            if os.path.exists(datapath):
-                return np.load(datapath, allow_pickle=True)
-
-        data_numpy = np.zeros(len(self.dataset), dtype=SpectralDataType)
-        for i, data in enumerate(self.dataset):
-            data_numpy[i] = data.raw_data
-
-        return data_numpy
 
     @abstractmethod
     def read_data(self, path: str) -> SpectralData:
         """
-        派生类需要实现的方法，根据FITS文件路径读取一条光谱数据。
+        派生类需要实现的方法,根据FITS文件路径读取一条光谱数据。
         参数：
         path: str, 数据集的路径
         返回：

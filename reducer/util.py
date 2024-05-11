@@ -31,7 +31,7 @@ def get_data_from_dataset_index(dataset_index: str) -> tuple:
     obsid = np.full(len(dataset), "0", dtype="U15")
 
     for i in range(len(dataset)):
-        data[i] = dataset[i].data[0][0][:3000]
+        data[i] = dataset[i].data[0][0][:3000]  # FIX
 
     for i in range(len(dataset)):
         classes[i] = dataset[i].header["CLASS"]
@@ -96,6 +96,7 @@ def get_data2d(dataset_index: str):
         filename = os.listdir(REDUCEDATAPATH + dataset_index)[0]
         data = get_reduce_data(REDUCEDATAPATH + dataset_index + "/" + filename)
         data2d = data.data2d
+
     return data2d
 
 

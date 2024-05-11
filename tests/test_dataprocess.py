@@ -21,7 +21,10 @@ class TestDataProcess(unittest.TestCase):
         self.assertIsInstance(result, DataFrame)
 
     def test_load_dataset(self):
-        raw_data_path = glob.glob(r"data/LamostDataset/LamostDataset-000*.npy")[0]
+        raw_data_path = glob.glob(r"data/LamostDataset/LamostDataset-000*.fits")
+        if not raw_data_path:
+            raise FileNotFoundError("File not found, please check the dataset exists.")
+        raw_data_path = raw_data_path[0]
         if not os.path.exists(raw_data_path):
             raise FileNotFoundError(
                 f"File {raw_data_path} not found, please check the dataset exists."
@@ -29,7 +32,6 @@ class TestDataProcess(unittest.TestCase):
 
         result = DataProcess.load_dataset("LamostDataset-000")
         spectral_data = result[0]
-        raw_data = np.load(raw_data_path, allow_pickle=True)
 
         try:
             bad_result = DataProcess.load_dataset("NonsenDataset-000")
@@ -37,10 +39,8 @@ class TestDataProcess(unittest.TestCase):
         except ValueError as e:
             self.assertEqual(str(e), "DatsetType NonsenDataset not found")
 
-        self.assertEqual(spectral_data.raw_data.dtype, SpectralDataType)
         self.assertIsInstance(spectral_data, SpectralData)
         self.assertIsInstance(result, Dataset)
-        self.assertEqual(len(result), len(raw_data))
 
     def test_get_class_dataset(self):
         dataset = DataProcess.load_dataset("LamostDataset-000")

@@ -36,7 +36,7 @@ class PCAReducer(Reducer):
             )
             ReduceData.from_numpy(*result)
 
-            return ReduceData
+            return ReduceData  # FIX
 
         data, classes, subclasses, obsid = get_data_from_dataset_index(dataset_index)
 

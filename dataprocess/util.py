@@ -70,15 +70,15 @@ def find_dataset_path(dataset_index: str) -> str:
     文件夹结构如下：
 
     DATASETBASEPATH = "Data/" \n
-    DATASETBASEPATH/LamostDataset/LamostDataset-000-SN0-STAR0-QSO0-GALAXY0.npy \n
-    DATASETBASEPATH/LamostDataset/LamostDataset-001-SN0-STAR0-QSO0-GALAXY0.npy \n
+    DATASETBASEPATH/LamostDataset/LamostDataset-000-SN0-STAR0-QSO0-GALAXY0.fits \n
+    DATASETBASEPATH/LamostDataset/LamostDataset-001-SN0-STAR0-QSO0-GALAXY0.fits \n
 
     >>> find_dataset_path("NonsenDataset-000")
     ValueError: 'Invalid dataset index format'
     >>> find_dataset_path("LamostDataset-000")
-    'Data/LamostDataset/LamostDataset-000-SN0-STAR0-QSO0-GALAXY0.npy'
+    'Data/LamostDataset/LamostDataset-000-SN0-STAR0-QSO0-GALAXY0.fits'
     >>> find_dataset_path("LamostDataset-001")
-    'Data/LamostDataset/LamostDataset-001-SN0-STAR0-QSO0-GALAXY0.npy'
+    'Data/LamostDataset/LamostDataset-001-SN0-STAR0-QSO0-GALAXY0.fits'
     >>> find_dataset_path("LamostDataset-002")
     FileNotFoundError: 'Dataset LamostDataset-002 not found'
     """
@@ -92,7 +92,7 @@ def find_dataset_path(dataset_index: str) -> str:
 
     dataset_dirs = glob.glob(base_path + "*Dataset/")
     for item in dataset_dirs:
-        current = glob.glob(item + "*.npy")
+        current = glob.glob(item + "*.fits")
         for i in current:
             if dataset_index in i:
                 return i
@@ -100,7 +100,9 @@ def find_dataset_path(dataset_index: str) -> str:
     raise FileNotFoundError(f"Dataset {dataset_index} not found")
 
 
-def generate_dataset_name(class_name: str, base_dir: str, data_numpy: NDArray) -> str:
+def generate_dataset_name(
+    class_name: str, base_dir: str, labels_list: NDArray[Any]
+) -> str:
     """
     生成数据集的名称
 
@@ -121,7 +123,7 @@ def generate_dataset_name(class_name: str, base_dir: str, data_numpy: NDArray) -
     """
     dataset_name = class_name
     dataset_index = generate_new_index(base_dir)
-    dataset_name_base = generate_dataset_name_base(data_numpy)
+    dataset_name_base = generate_dataset_name_base(labels_list)
     return f"{dataset_name}-{dataset_index}-{dataset_name_base}"
 
 
@@ -161,11 +163,9 @@ def generate_dataset_name_base(dataset: NDArray[Any]) -> str:
     注意:
     数据集名称的生成规则是根据数据集中各类别样本的数量，
     按照'SN{数量}-STAR{数量}-QSO{数量}-GALAXY{数量}'的格式生成。
-    如果某一类别的样本数量为0，则该类别的数量在名称中表示为0。
 
     参数:
-    dataset (NDArra[Any]): 数据集。
-    Any: SpectralDataType类型的数据集。
+    dataset (NDArra[Any]): 标签列表。
 
     返回:
     str: 数据集的名称。
@@ -179,21 +179,15 @@ def generate_dataset_name_base(dataset: NDArray[Any]) -> str:
         raise ValueError("Dataset is empty")
 
     total_num = len(dataset)
-    header_set = dataset["header"]
     star_num = 0
-    yso_num = 0
+    qso_num = 0
     galaxy_num = 0
 
-    for header in header_set:
-        obj_class = Header.fromstring(header)["CLASS"]
-        if obj_class == "STAR":
-            star_num += 1
-        elif obj_class == "QSO":
-            yso_num += 1
-        elif obj_class == "GALAXY":
-            galaxy_num += 1
+    star_num = len(dataset[dataset == "STAR"])
+    qso_num = len(dataset[dataset == "QSO"])
+    galaxy_num = len(dataset[dataset == "GALAXY"])
 
-    return f"SN{total_num}-STAR{star_num}-QSO{yso_num}-GALAXY{galaxy_num}"
+    return f"SN{total_num}-STAR{star_num}-QSO{qso_num}-GALAXY{galaxy_num}"
 
 
 def generate_new_index(dataset_dir: str) -> str:

@@ -8,4 +8,5 @@ data/
 *.fits
 *.fits.gz
 origin_data/*
+demo/*
 

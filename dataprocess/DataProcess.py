@@ -5,10 +5,11 @@ import re
 
 import numpy as np
 from pandas import DataFrame
+from astropy.io import fits
 
 from config.config import DATASETBASEPATH
 from .Dataset import Dataset
-from .SpectralData import SpectralData
+from .SpectralData import SpectralData, LamostSpectraData
 from .LamostDataset import LamostDataset
 from .SDSSDataset import SDSSDataset
 from .util import find_dataset_path, generate_dataset_name
@@ -53,14 +54,15 @@ class DataProcess:
 
         sublist = []
         for item in dataset:
-            if item.header["CLASS"] == class_name:
+            if item.CLASS == class_name:
                 sublist.append(item)
 
         subdataset.dataset = sublist
+        labels = np.array([class_name] * len(sublist))
         subdataset.name = generate_dataset_name(
             subdataset.__class__.__name__,
             subdataset.dir_base_path,
-            subdataset.to_numpy(),
+            labels,
         )
         return subdataset
 
@@ -95,14 +97,20 @@ class DataProcess:
         if telescope not in DATASET_DICT.keys():
             raise ValueError(f"DatsetType {telescope} not found")
 
-        dataset = DATASET_DICT.get(telescope)()  # LamostDataset() or SDSSDataset()
+        dataset: Dataset = DATASET_DICT.get(telescope)()
 
         dataset_path = find_dataset_path(dataset_index)
-        data_numpy = np.load(dataset_path, allow_pickle=True)
-
         spectrum_data = []
-        for item in data_numpy:
-            spectrum_data.append(SpectralData.from_numpy(item))
+
+        with fits.open(dataset_path) as hdulist:
+            for i in range(0, len(hdulist), 2):
+                match telescope:
+                    case "LamostDataset":
+                        spectrum_data.append(
+                            LamostSpectraData([hdulist[i], hdulist[i + 1]])
+                        )
+                    case _:
+                        spectrum_data.append(SpectralData([hdulist[i], hdulist[i + 1]]))
 
         dataset.dataset = spectrum_data
         dataset.name = dataset_path.split("\\")[-1].split(".")[0]

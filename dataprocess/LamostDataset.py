@@ -2,7 +2,7 @@ import os
 
 from astropy.io import fits
 
-from .SpectralData import SpectralData
+from .SpectralData import SpectralData, LamostSpectraData
 from .Dataset import Dataset
 
 
@@ -12,7 +12,5 @@ class LamostDataset(Dataset):
             raise FileNotFoundError(f"File {path} not found")
 
         with fits.open(path) as hdulist:
-            header = hdulist[0].header
-            fits_data = hdulist[1].data
-
-        return SpectralData(header, fits_data)
+            new_hdulist = fits.HDUList([hdulist[0].copy(), hdulist[1].copy()])
+            return LamostSpectraData(new_hdulist)
