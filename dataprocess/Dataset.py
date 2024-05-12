@@ -81,8 +81,8 @@ class Dataset(ABC):
 
         with fits.HDUList() as hdulist:
             for data in self.dataset:
-                hdulist.append(data.hdul[0])
-                hdulist.append(data.hdul[1])
+                for hdu in data.hdul:
+                    hdulist.append(hdu)
 
             hdulist.writeto(save_path, overwrite=True, output_verify="ignore")
 

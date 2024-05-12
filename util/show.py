@@ -12,13 +12,9 @@ from cluster import ClusterData
 
 
 def show_spectraldata(data: SpectralData) -> None:
-    header: Header = data.header
-    data: FITS_rec = data.data
-
-    flux = data.FLUX[0]
-    wavelength = data.WAVELENGTH[0]
-
-    name = header["OBSID"]
+    flux = data.FLUX
+    wavelength = data.WAVELENGTH
+    name = data.OBSID
 
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.set_xlim(wavelength[0], wavelength[-1])
@@ -31,7 +27,7 @@ def show_spectraldata(data: SpectralData) -> None:
     # ax2.legend(loc="upper right")
     # Adjust subplots to fit the figure a
     plt.tight_layout()
-    # plt.show()
+    plt.show()
 
 
 def show_reduce_data(data: ReduceData) -> None:

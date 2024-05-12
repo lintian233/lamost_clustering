@@ -9,7 +9,7 @@ from astropy.io import fits
 
 from config.config import DATASETBASEPATH
 from .Dataset import Dataset
-from .SpectralData import SpectralData, LamostSpectraData
+from .SpectralData import SpectralData, LamostSpectraData, SDSSSpectraData
 from .LamostDataset import LamostDataset
 from .SDSSDataset import SDSSDataset
 from .util import find_dataset_path, generate_dataset_name
@@ -102,15 +102,28 @@ class DataProcess:
         dataset_path = find_dataset_path(dataset_index)
         spectrum_data = []
 
-        with fits.open(dataset_path) as hdulist:
-            for i in range(0, len(hdulist), 2):
-                match telescope:
-                    case "LamostDataset":
-                        spectrum_data.append(
-                            LamostSpectraData([hdulist[i], hdulist[i + 1]])
+        hdulist = fits.open(dataset_path)
+
+        match telescope:
+            case "LamostDataset":
+                # [0,1]
+                for i in range(0, len(hdulist), 2):
+                    spectrum_data.append(
+                        LamostSpectraData([hdulist[i], hdulist[i + 1]])
+                    )
+            case "SDSSDataset":
+                # [0,1,2,3]
+                for i in range(0, len(hdulist), 4):
+                    spectrum_data.append(
+                        SDSSSpectraData(
+                            [
+                                hdulist[i],
+                                hdulist[i + 1],
+                                hdulist[i + 2],
+                                hdulist[i + 3],
+                            ]
                         )
-                    case _:
-                        spectrum_data.append(SpectralData([hdulist[i], hdulist[i + 1]]))
+                    )
 
         dataset.dataset = spectrum_data
         dataset.name = dataset_path.split("\\")[-1].split(".")[0]
@@ -131,7 +144,7 @@ class DataProcess:
         dataset = []
         dataset_dirs = glob.glob(base_path + "*Dataset/")
         for item in dataset_dirs:
-            current = glob.glob(item + "*.npy")
+            current = glob.glob(item + "*.fits")
             dataset.append(current)
 
         pattern = r"\\([A-Za-z]+-\d+)-SN(\d+)-STAR(\d+)-QSO(\d+)-GALAXY(\d+)"

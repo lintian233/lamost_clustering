@@ -41,15 +41,6 @@ class SpectralData:
         self.header = hdul[0].header
         self.data = hdul[1].data
 
-    @classmethod
-    def from_numpy(cls, data: NDArray[Any]) -> "SpectralData":
-        header = Header.fromstring(data[0])
-        fits_data = FITS_rec(data[1])
-        hdu_header = PrimaryHDU(header=header)
-        hdu_fitsrec = BinTableHDU(fits_data)
-        hdul = HDUList([hdu_header, hdu_fitsrec])
-        return cls(hdul)
-
     def __getitem__(self, key: str) -> Any:
         return self.header[key]
 
@@ -64,6 +55,10 @@ class LamostSpectraData(SpectralData):
         return self.data.FLUX[0]
 
     @property
+    def WAVELENGTH(self) -> NDArray:
+        return self.data.WAVELENGTH[0]
+
+    @property
     def SUBCLASS(self) -> str:
         return self.header["SUBCLASS"]
 
@@ -72,5 +67,38 @@ class LamostSpectraData(SpectralData):
         return self.header["CLASS"]
 
     @property
+    def OBSID(self) -> str:
+        return self.header["OBSID"]
+
+
+@dataclass
+class SDSSSpectraData(SpectralData):
+    overall_header: Header
+    spectra: BinTableHDU
+    objinfo: BinTableHDU
+    spzline: BinTableHDU
+
+    def __init__(self, hdul: HDUList):
+        # super: SpectralData
+        self.hdul = hdul
+        self.overall_header = hdul[0].header
+        self.spectra = hdul[1]
+        self.objinfo = hdul[2]
+        self.spzline = hdul[3]
+
+    @property
+    def FLUX(self) -> NDArray:
+        return self.spectra.data.flux
+
+    @property
     def WAVELENGTH(self) -> NDArray:
-        return self.data.WAVELENGTH[0]
+        # 转换为线性波长,两位小数
+        return 10**self.spectra.data.loglam
+
+    @property
+    def CLASS(self) -> str:
+        return self.objinfo.data.CLASS[0]
+
+    @property
+    def OBSID(self) -> str:
+        return self.objinfo.data.SPECOBJID[0]
