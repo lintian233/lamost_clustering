@@ -19,4 +19,6 @@ class TestSDSSDataset(unittest.TestCase):
         self.assertIsInstance(dataset, SDSSDataset)
         self.assertIsInstance(dataset[0], SDSSSpectraData)
 
-        show_spectraldata(dataset[0])
+        for data in dataset:
+            show_spectraldata(data)
+            break

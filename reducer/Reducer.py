@@ -26,7 +26,7 @@ class Reducer(ABC):
         self.result_dir = REDUCEDATAPATH
         if not os.path.exists(self.result_dir):
             os.makedirs(self.result_dir)
-        self.all_result = ''
+        self.all_result = ""
 
     @abstractmethod
     def reduce(self, dataset_index: str) -> ReduceData:

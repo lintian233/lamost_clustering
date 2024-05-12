@@ -101,7 +101,10 @@ class SDSSSpectraData(SpectralData):
 
     @property
     def OBSID(self) -> str:
-        return self.objinfo.data.SPECOBJID[0]
+        plate = self.overall_header["PLATEID"]
+        mjd = self.overall_header["MJD"]
+        fiber = self.overall_header["FIBERID"]
+        return f"{plate}-{mjd}-{fiber}"
 
     @property
     def SUBCLASS(self) -> str:
