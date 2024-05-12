@@ -7,14 +7,22 @@ from astropy.io.fits.fitsrec import FITS_rec
 
 
 from dataprocess import SpectralData
+from dataprocess.SpectralData import LamostSpectraData, SDSSSpectraData
 from reducer import ReduceData
 from cluster import ClusterData
 
 
 def show_spectraldata(data: SpectralData) -> None:
+    telescope = (
+        "LAMOST"
+        if isinstance(data, LamostSpectraData)
+        else "SDSS" if isinstance(data, SDSSSpectraData) else "Other"
+    )
     flux = data.FLUX
     wavelength = data.WAVELENGTH
     name = data.OBSID
+    class_name = data.CLASS
+    sub_class_name = data.SUBCLASS
 
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.set_xlim(wavelength[0], wavelength[-1])
@@ -22,7 +30,7 @@ def show_spectraldata(data: SpectralData) -> None:
     ax.plot(wavelength, flux, color="black", linewidth=0.41)
     ax.set_xlabel("Wavelength(Å)")
     ax.set_ylabel("Flux")
-    ax.set_title(f"spectral data - {name} ")
+    ax.set_title(f"{telescope}-{name}-{class_name}-{sub_class_name}")
     # ax2.xaxis.set_tick_params(labelbottom=False)  # Hide x-axis values
     # ax2.legend(loc="upper right")
     # Adjust subplots to fit the figure a
