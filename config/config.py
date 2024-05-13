@@ -2,3 +2,4 @@
 
 REDUCEDATAPATH = "./data/ReduceData/"
 DATASETBASEPATH = "./data/"
+CLUSTER_DATA_PATH = "./data/ClusterData/"

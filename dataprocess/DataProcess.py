@@ -13,6 +13,7 @@ from .SpectralData import SpectralData, LamostSpectraData, SDSSSpectraData
 from .LamostDataset import LamostDataset
 from .SDSSDataset import SDSSDataset
 from .util import find_dataset_path, generate_dataset_name
+from .util import init_lamost_dataset, init_sdss_dataset
 
 """
 /Data/ 
@@ -106,24 +107,9 @@ class DataProcess:
 
         match telescope:
             case "LamostDataset":
-                # [0,1]
-                for i in range(0, len(hdulist), 2):
-                    spectrum_data.append(
-                        LamostSpectraData([hdulist[i], hdulist[i + 1]])
-                    )
+                spectrum_data = init_lamost_dataset(hdulist)
             case "SDSSDataset":
-                # [0,1,2,3]
-                for i in range(0, len(hdulist), 4):
-                    spectrum_data.append(
-                        SDSSSpectraData(
-                            [
-                                hdulist[i],
-                                hdulist[i + 1],
-                                hdulist[i + 2],
-                                hdulist[i + 3],
-                            ]
-                        )
-                    )
+                spectrum_data = init_sdss_dataset(hdulist)
 
         dataset.dataset = spectrum_data
         dataset.name = dataset_path.split("\\")[-1].split(".")[0]

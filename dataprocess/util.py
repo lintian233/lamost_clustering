@@ -3,12 +3,15 @@ import re
 import glob
 from typing import List, Any
 
-
+import numpy as np
 from numpy.typing import NDArray
 from astropy.io.fits.header import Header
-
+from astropy.io.fits.hdu.hdulist import HDUList
+from joblib import Parallel, delayed
+from joblib.externals.loky import set_loky_pickler
 
 from config.config import DATASETBASEPATH
+from .SpectralData import SpectralData, LamostSpectraData, SDSSSpectraData
 
 
 def check_dataset_index(dataset_index: str) -> bool:
@@ -231,3 +234,26 @@ def generate_new_index(dataset_dir: str) -> str:
         return "000"
 
     return f"{int(max(index_set_list)) + 1:03d}"
+
+
+def init_lamost_dataset(hdulist: HDUList, n_jobs: int = 1) -> List[SpectralData]:
+    # [0,1],[2,3],[4,5],[6,7]
+    ilist = np.arange(0, len(hdulist), 2)
+    set_loky_pickler("dill")
+    spectrum_data = Parallel(n_jobs=n_jobs)(
+        delayed(LamostSpectraData)(HDUList([hdulist[i], hdulist[i + 1]])) for i in ilist
+    )
+    return spectrum_data
+
+
+def init_sdss_dataset(hdulist: HDUList, n_jobs: int = 1) -> List[SpectralData]:
+    # [0,1,2,3]
+    ilist = np.arange(0, len(hdulist), 4)
+    set_loky_pickler("dill")
+    spectrum_data = Parallel(n_jobs=n_jobs)(
+        delayed(SDSSSpectraData)(
+            HDUList([hdulist[i], hdulist[i + 1], hdulist[i + 2], hdulist[i + 3]])
+        )
+        for i in ilist
+    )
+    return spectrum_data

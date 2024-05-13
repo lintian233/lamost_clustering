@@ -1,11 +1,17 @@
-from abc import ABC, abstractmethod
 import os
+import time
+
+from abc import ABC, abstractmethod
 from typing import Any, List
 
 import numpy as np
 from numpy.typing import NDArray
-from concurrent.futures import ThreadPoolExecutor
+
 from astropy.io import fits
+
+from concurrent.futures import ThreadPoolExecutor
+from joblib import Parallel, delayed
+from joblib.externals.loky import set_loky_pickler
 
 from .SpectralData import SpectralData, SpectralDataType
 from .util import parser_fits_path, generate_dataset_name
@@ -98,3 +104,52 @@ class Dataset(ABC):
         一个SpectralData对象。
         """
         pass
+
+    def add_dataset_parallel(self, dirpath: str) -> str:
+        """
+        从给定目录中读取数据集，并将其添加到数据集中。
+
+        参数：
+        dirpath: str, 数据集的路径
+
+        返回：
+        str, 数据集的保存路径
+
+        示例：
+        Data/Fits/中有多个FITS文件
+        >>> add_dataset("Data/Fits/")
+        'DATSETBASEPATH/XXXDataset/XXXDataset-XXX-SNXXX-STARXXX-QSOXXX-GALAXYXXX.fits'
+        """
+        fits_path = parser_fits_path(dirpath)
+        # print(f"Total files: {len(fits_path)}")
+        # start_time = time.time()
+
+        set_loky_pickler("dill")
+        parallel = Parallel(n_jobs=-1, backend="loky")
+        results = parallel(delayed(self.read_data)(path) for path in fits_path)
+
+        self.dataset = list(results)
+        # print(f"load data time: {time.time() - start_time}")
+
+        labels_list = np.array([i.CLASS for i in self.dataset])
+
+        dataset_name = generate_dataset_name(
+            self.__class__.__name__, self.dir_base_path, labels_list
+        )
+
+        self.name = dataset_name
+        save_path = self.dir_base_path + dataset_name + ".fits"
+
+        # print("saving...")
+        # start_time = time.time()
+        with fits.HDUList() as hdulist:
+            for data in self.dataset:
+                for hdu in data.hdul:
+                    hdulist.append(hdu)
+                # hdulist.extend([data.hdul[i] for i in range(len(data.hdul))])
+
+            hdulist.writeto(save_path, overwrite=True, output_verify="ignore")
+
+        # print(f"Save time: {time.time() - start_time}")
+
+        return save_path

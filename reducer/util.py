@@ -34,13 +34,13 @@ def get_data_from_dataset_index(dataset_index: str) -> tuple:
         # data[i] = dataset[i].data.FLUX[0][0:3000]
         data[i] = dataset[i].FLUX[0:3000]
     for i in range(len(dataset)):
-        classes[i] = dataset[i].header["CLASS"]
+        classes[i] = dataset[i].CLASS
 
     for i in range(len(dataset)):
-        subclasses[i] = dataset[i].header["SUBCLASS"]
+        subclasses[i] = dataset[i].SUBCLASS
 
     for i in range(len(dataset)):
-        obsid[i] = dataset[i].header["OBSID"]
+        obsid[i] = dataset[i].OBSID
 
     return data, classes, subclasses, obsid
 

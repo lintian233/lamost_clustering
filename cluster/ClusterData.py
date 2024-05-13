@@ -9,32 +9,43 @@ from typing import Any
 存储在一个文件夹内，文件夹名字为目录结构如下。
 Data/
     -ClusterData/
-                PCA/
-                    -PCA-001-Lamostdataset-000-PARM-12-2-3-4-5-90-1-4-5/
+                -PCA-001-Lamostdataset-000-PARM-12-2-3-4-5-90-1-4-5/
                                                                      -data2d.npy
                                                                      -labels.npy
-                                                                     -hyperparameters.npy
 """
 
 
 @dataclass
 class ClusterData:
     data2d: NDArray[np.float64]
-    labels: NDArray[np.float64]
+    datand: NDArray[np.float64]
+    classes: NDArray[np.str_]
+    subclasses: NDArray[np.str_]
+    obsid: NDArray[np.str_]
     hyperparameters: dict[str, Any]
 
     def __init__(
         self,
         data2d: NDArray[np.float64],
-        labels: NDArray[np.float64],
+        datand: NDArray[np.float64],
+        classes: NDArray[np.str_],
+        subclasses: NDArray[np.str_],
+        obsid: NDArray[np.str_],
         hyperparameters: dict[str, Any],
     ):
         self.data2d = data2d
-        self.labels = labels
+        self.datand = datand
+        self.classes = classes
+        self.subclasses = subclasses
+        self.obsid = obsid
         self.hyperparameters = hyperparameters
 
-    @staticmethod
-    def from_cluster_data(cluster_data: "ClusterData") -> "ClusterData":
-        return ClusterData(
-            cluster_data.data2d, cluster_data.labels, cluster_data.hyperparameters
-        )
+    @classmethod
+    def from_numpy(
+        cls, data2d, datand, classes, subclasses, obsid, hyperparameters
+    ) -> "ClusterData":
+        """
+        从numpy数组中创建ReduceData对象
+        """
+
+        return cls(data2d, datand, classes, subclasses, obsid, hyperparameters)
