@@ -40,7 +40,23 @@ class DataProcess:
         返回：
         Dataset, 子类数据集
         """
-        raise NotImplementedError("get_subclass_dataset method not implemented")
+        subdataset = dataset.__class__()
+        class_array = np.array([item.SUBCLASS for item in dataset])
+        class_name_set = np.unique(class_array)
+        if subclass not in class_name_set:
+            raise ValueError(f"Class {subclass} not found in dataset")
+
+        index = np.where(class_array == subclass)[0]
+        sublist = dataset[index]
+
+        subdataset.dataset = sublist
+        labels = np.array([subclass] * len(sublist))
+        subdataset.name = generate_dataset_name(
+            subdataset.__class__.__name__,
+            subdataset.dir_base_path,
+            labels,
+        )
+        return subdataset
 
     @staticmethod
     def get_class_dataset(dataset: Dataset, class_name: str) -> Dataset:
@@ -52,12 +68,14 @@ class DataProcess:
         Dataset, 类数据集
         """
         subdataset = dataset.__class__()
+        class_array = np.array([item.CLASS for item in dataset])
+        class_name_set = np.unique(class_array)
+        if class_name not in class_name_set:
+            raise ValueError(f"Class {class_name} not found in dataset")
 
-        sublist = []
-        for item in dataset:
-            if item.CLASS == class_name:
-                sublist.append(item)
+        index = np.where(class_array == class_name)[0]
 
+        sublist = dataset[index]
         subdataset.dataset = sublist
         labels = np.array([class_name] * len(sublist))
         subdataset.name = generate_dataset_name(

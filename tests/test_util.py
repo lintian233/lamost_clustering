@@ -26,6 +26,9 @@ class TestUtil(unittest.TestCase):
         self.assertTrue(True)
 
     def test_show_reducedata(self):
+        # ReducerManager.info
+        # Reducer.get_result(3)
+        # Reducer.info_result()
         reducer = PCAReducer(5)
         reducer.info_result()
         reduce_data = reducer.get_result(3)

@@ -82,7 +82,7 @@ def show_reduce_data_overlay(reduce_data: ReduceData, label) -> None:
     ax.set_xlabel("")
 
     plt.savefig(f"overlay.png", bbox_inches="tight", dpi=400)
-    plt.show()
+    # plt.show()
 
 
 def show_reduce_data_separate(reduce_data: ReduceData, label) -> None:
@@ -163,7 +163,7 @@ def show_reduce_data_separate(reduce_data: ReduceData, label) -> None:
     plt.subplots_adjust(wspace=0.1, hspace=0.1)
     # plt.tight_layout()
     plt.savefig(f"reduce_data.png", bbox_inches="tight", dpi=400)
-    plt.show()
+    # plt.show()
 
 
 def show_cluster_data(data: ClusterData) -> None:

@@ -43,8 +43,10 @@ class Dataset(ABC):
     def __getitem__(self, key: Any) -> SpectralData:
         if isinstance(key, int):
             return self.dataset[key]
+        if isinstance(key, np.ndarray) or isinstance(key, list):
+            return [self.dataset[i] for i in key]
 
-        raise TypeError("Invalid argument type")
+        raise TypeError(f"Invalid argument type:{key.__class__.__name__}")
 
     def __len__(self) -> int:
         """Return the number of items in the dataset"""
