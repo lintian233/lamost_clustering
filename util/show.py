@@ -100,7 +100,6 @@ def show_reduce_data_separate(reduce_data: ReduceData, label) -> None:
             )
 
     class_name_set = np.unique(class_name)
-    sub_class_name_set = np.unique(sub_class_name)
 
     default_row = 4
     length = len(class_name_set)
@@ -162,7 +161,7 @@ def show_reduce_data_separate(reduce_data: ReduceData, label) -> None:
 
     plt.subplots_adjust(wspace=0.1, hspace=0.1)
     # plt.tight_layout()
-    plt.savefig(f"reduce_data.png", bbox_inches="tight", dpi=400)
+    plt.savefig(f"separate.png", bbox_inches="tight", dpi=400)
     # plt.show()
 
 

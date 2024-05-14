@@ -11,6 +11,7 @@ from util import show_spectraldata, show_reduce_data
 from reducer import ReduceData
 from reducer.PCAReducer import PCAReducer
 from reducer.Reducer import Reducer
+from reducer.ReduceManager import ReduceManager
 
 
 class TestUtil(unittest.TestCase):
@@ -29,7 +30,6 @@ class TestUtil(unittest.TestCase):
         # ReducerManager.info
         # Reducer.get_result(3)
         # Reducer.info_result()
-        reducer = PCAReducer(5)
-        reducer.info_result()
-        reduce_data = reducer.get_result(3)
-        show_reduce_data(reduce_data, mode="separate", label="subclass")
+        ReduceManager.info_result()
+        data = ReduceManager.get_result(3)
+        show_reduce_data(data, mode="separate", label="class")

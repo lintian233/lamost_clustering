@@ -1,6 +1,6 @@
 import os
-
 import pandas as pd
+
 
 from reducer.ReduceData import ReduceData
 from reducer.util import get_reduce_data
@@ -8,11 +8,8 @@ from config.config import REDUCEDATAPATH
 
 
 class ReduceManager:
-    def __init__(self):
-        self.result_dir = REDUCEDATAPATH
-        self.all_result = []
-
-    def info_result(self):
+    @staticmethod
+    def info_result():
         """
         读写result_dir下所有的降维结果
         将结果打印并返回
@@ -22,6 +19,8 @@ class ReduceManager:
         每个元素是一个列表
         列表中包含了一个降维结果的索引和对应文件名
         """
+        result_dir = REDUCEDATAPATH
+        all_result = []
         PCA_data = []
         PCA_files = []
         TSNE_data = []
@@ -29,47 +28,23 @@ class ReduceManager:
         UMAP_data = []
         UMAP_files = []
         index = 0
-        for dir in os.listdir(self.result_dir):
-
-            for file in os.listdir(self.result_dir + dir):
-
+        for dir in os.listdir(result_dir):
+            for file in os.listdir(result_dir + dir):
                 if file.startswith("PCA"):
                     splits = file[:-4].split("-")
-                    new_splits = []
-
-                    for i in range(0, len(splits)):
-
-                        if i % 2 == 0:
-                            new_splits.append(splits[i])
-
+                    new_splits = [splits[i] for i in range(0, len(splits), 2)]
                     PCA_data.append([index, dir] + new_splits)
-                    PCA_files.append([index, self.result_dir + dir + "/" + file])
-
+                    PCA_files.append([index, result_dir + dir + "/" + file])
                 elif file.startswith("TSNE"):
-
                     splits = file[:-4].split("-")
-                    new_splits = []
-
-                    for i in range(0, len(splits)):
-
-                        if i % 2 == 0:
-                            new_splits.append(splits[i])
-
+                    new_splits = [splits[i] for i in range(0, len(splits), 2)]
                     TSNE_data.append([index, dir] + new_splits)
-                    TSNE_files.append([index, self.result_dir + dir + "/" + file])
-
+                    TSNE_files.append([index, result_dir + dir + "/" + file])
                 elif file.startswith("UMAP"):
                     splits = file[:-4].split("-")
-                    new_splits = []
-
-                    for i in range(0, len(splits)):
-
-                        if i % 2 == 0:
-                            new_splits.append(splits[i])
-
+                    new_splits = [splits[i] for i in range(0, len(splits), 2)]
                     UMAP_data.append([index, dir] + new_splits)
-                    UMAP_files.append([index, self.result_dir + dir + "/" + file])
-
+                    UMAP_files.append([index, result_dir + dir + "/" + file])
                 index += 1
 
         PCA_df = pd.DataFrame(
@@ -103,23 +78,33 @@ class ReduceManager:
             ],
         )
 
-        combineed_df = pd.concat([PCA_df, TSNE_df, UMAP_df], ignore_index=True)
+        combined_df = pd.concat([PCA_df, TSNE_df, UMAP_df], ignore_index=True)
 
-        print(combineed_df.to_string(index=False))
+        print(combined_df.to_string(index=False))
 
-        self.all_result = PCA_files + TSNE_files + UMAP_files
+        all_result = PCA_files + TSNE_files + UMAP_files
 
-        return combineed_df
+        return combined_df
 
-    def get_result(self, index) -> ReduceData:
+    @staticmethod
+    def get_result(index) -> ReduceData:
         """
         根据索引获取降维结果
         返回对应降维结果的ReduceData对象
         """
+        result_dir = REDUCEDATAPATH
+        all_result = []
+        i = 0
+        for dir in os.listdir(result_dir):
+            for file in os.listdir(result_dir + dir):
+                if (
+                    file.startswith("PCA")
+                    or file.startswith("TSNE")
+                    or file.startswith("UMAP")
+                ):
+                    all_result.append([i, result_dir + dir + "/" + file])
+                    i += 1
 
-        if self.all_result == []:
-            self.info_result()
-
-        for item in self.all_result:
+        for item in all_result:
             if item[0] == index:
                 return get_reduce_data(item[1])

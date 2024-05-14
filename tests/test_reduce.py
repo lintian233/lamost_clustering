@@ -7,6 +7,4 @@ class TestReduce(unittest.TestCase):
     def test_info_result(self):
         print("\n")
         reducer = PCAReducer(dimension=50)
-        print(reducer.info_result())
-
         pass
