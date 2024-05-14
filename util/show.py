@@ -12,6 +12,69 @@ from dataprocess.SpectralData import LamostSpectraData, SDSSSpectraData
 from reducer import ReduceData
 from cluster import ClusterData
 
+COLORS = [
+    "#1f77b4",
+    "#ff7f0e",
+    "#2ca02c",
+    "#d62728",
+    "#9467bd",
+    "#8c564b",
+    "#e377c2",
+    "#7f7f7f",
+    "#bcbd22",
+    "#17becf",
+    "#aec7e8",
+    "#ffbb78",
+    "#98df8a",
+    "#ff9896",
+    "#c5b0d5",
+    "#c49c94",
+    "#f7b6d2",
+    "#c7c7c7",
+    "#dbdb8d",
+    "#9edae5",
+    "#393b79",
+    "#5254a3",
+    "#6b6ecf",
+    "#9c9ede",
+    "#637939",
+    "#8ca252",
+    "#b5cf6b",
+    "#cedb9c",
+    "#8c6d31",
+    "#bd9e39",
+    "#e7ba52",
+    "#e7cb94",
+    "#843c39",
+    "#ad494a",
+    "#d6616b",
+    "#e7969c",
+    "#7b4173",
+    "#a55194",
+    "#ce6dbd",
+    "#de9ed6",
+    "#3182bd",
+    "#6baed6",
+    "#9ecae1",
+    "#c6dbef",
+    "#e6550d",
+    "#fd8d3c",
+    "#fdae6b",
+    "#fdd0a2",
+    "#31a354",
+    "#74c476",
+    "#a1d99b",
+    "#c7e9c0",
+    "#756bb1",
+    "#9e9ac8",
+    "#bcbddc",
+    "#dadaeb",
+    "#636363",
+    "#969696",
+    "#bdbdbd",
+    "#d9d9d9",
+]
+
 
 def show_spectraldata(data: SpectralData) -> None:
     telescope = (
@@ -69,7 +132,7 @@ def show_reduce_data_overlay(reduce_data: ReduceData, label) -> None:
     squares = []
     for i in range(len(num)):
         index = np.where(class_name == num[i])
-        colors = sns.color_palette("Spectral", as_cmap=True)((i) / len(num))
+        colors = COLORS[i % len(COLORS)]
         ax.scatter(
             data[index, 0], data[index, 1], s=node_size, label=num[i], color=colors
         )
@@ -153,11 +216,10 @@ def show_reduce_data_separate(reduce_data: ReduceData, label) -> None:
         ax.set_xlabel("")
         ax.set_ylabel("")
 
-    # Hide empty subplots
-    for i in range(length, default_row * col):
-        row, j = divmod(i, col)
-        # axes[row, j].axis("off")
-        ax.axis("off")
+        # Hide empty subplots
+        for ax in axes.flat:
+            if not ax.title.get_text():
+                ax.set_axis_off()
 
     plt.subplots_adjust(wspace=0.1, hspace=0.1)
     # plt.tight_layout()

@@ -7,9 +7,12 @@ from astropy.io.fits.fitsrec import FITS_rec
 
 
 from dataprocess.DataProcess import DataProcess
+from dataprocess.LamostDataset import LamostDataset
+from dataprocess.SDSSDataset import SDSSDataset
+
 from util import show_spectraldata, show_reduce_data
 from reducer import ReduceData
-from reducer.PCAReducer import PCAReducer
+from reducer.UMAPReducer import UMAPReducer
 from reducer.Reducer import Reducer
 from reducer.ReduceManager import ReduceManager
 
@@ -27,9 +30,18 @@ class TestUtil(unittest.TestCase):
         self.assertTrue(True)
 
     def test_show_reducedata(self):
-        # ReducerManager.info
-        # Reducer.get_result(3)
-        # Reducer.info_result()
+        # dataset = SDSSDataset()
+        # dataset.add_dataset_parallel(r"origin_data\SDSS\STAR-QSO-100")
+        # reducer = UMAPReducer(
+        #     dimension=20,
+        #     n_neighbors=5,
+        #     metric="euclidean",
+        #     learning_rate=1.0,
+        #     min_dist=0.1,
+        # )
+        # reducer.reduce("SDSSDataset-001")
+
         ReduceManager.info_result()
         data = ReduceManager.get_result(3)
-        show_reduce_data(data, mode="separate", label="class")
+        # separate
+        show_reduce_data(data, mode="overlay", label="subclass")
