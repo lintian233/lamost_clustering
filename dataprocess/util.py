@@ -2,6 +2,7 @@
 import re
 import glob
 from typing import List, Any
+import os
 
 import numpy as np
 from numpy.typing import NDArray
@@ -150,8 +151,13 @@ def parser_fits_path(dirpath: str) -> List[str]:
 
     if dirpath[-1] != "/":
         dirpath += "/"
+    all_dir = glob.glob(dirpath + "*")
+    all_fits_files_path = []
+    for d in all_dir:
+        if os.path.isdir(d):
+            all_fits_files_path.extend(parser_fits_path(d))
 
-    all_fits_files_path = glob.glob(dirpath + "*.fits")
+    all_fits_files_path.extend(glob.glob(dirpath + "*.fits"))
 
     if len(all_fits_files_path) == 0:
         raise FileNotFoundError(f"No fits files found in {dirpath}")
