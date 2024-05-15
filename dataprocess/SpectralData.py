@@ -109,3 +109,32 @@ class SDSSSpectraData(SpectralData):
     @property
     def SUBCLASS(self) -> str:
         return self.objinfo.data.SUBCLASS[0]
+
+
+class StdSpectralData(SpectralData):
+    def __init__(self, hdul: HDUList):
+        # first:OBSID CLASS SUBCLASS ORIGIN
+        # data: FLUX
+        pass
+
+    @property
+    def FLUX(self) -> NDArray:
+        return self.data.FLUX[0]
+
+    @property
+    def WAVELENGTH(self) -> NDArray:
+        #
+        return np.zeros(3000)
+
+    @property
+    def CLASS(self) -> str:
+        return self.header["CLASS"]
+
+    @property
+    def OBSID(self) -> str:
+        return self.header["OBSID"]
+
+    @property
+    def ORIGIN(self) -> str:
+        # Lamost or SDSS
+        return self.header["ORIGIN"]

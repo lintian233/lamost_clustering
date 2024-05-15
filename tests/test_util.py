@@ -31,7 +31,7 @@ class TestUtil(unittest.TestCase):
 
     def test_show_reducedata(self):
         # dataset = SDSSDataset()
-        # dataset.add_dataset_parallel(r"origin_data\SDSS\STAR-QSO-100")
+        # dataset.add_dataset_parallel(r"origin_data\SDSS\QSG")
         # reducer = UMAPReducer(
         #     dimension=20,
         #     n_neighbors=5,
@@ -39,9 +39,9 @@ class TestUtil(unittest.TestCase):
         #     learning_rate=1.0,
         #     min_dist=0.1,
         # )
-        # reducer.reduce("SDSSDataset-001")
+        # reducer.reduce("SDSSDataset-002")
 
         ReduceManager.info_result()
         data = ReduceManager.get_result(3)
         # separate
-        show_reduce_data(data, mode="overlay", label="subclass")
+        show_reduce_data(data, mode="separate", label="subclass")

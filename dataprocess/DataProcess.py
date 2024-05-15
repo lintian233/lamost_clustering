@@ -7,11 +7,13 @@ import numpy as np
 from pandas import DataFrame
 from astropy.io import fits
 
+
 from config.config import DATASETBASEPATH
 from .Dataset import Dataset
 from .SpectralData import SpectralData, LamostSpectraData, SDSSSpectraData
 from .LamostDataset import LamostDataset
 from .SDSSDataset import SDSSDataset
+from .StdDataset import StdDataset
 from .util import find_dataset_path, generate_dataset_name
 from .util import init_lamost_dataset, init_sdss_dataset
 
@@ -26,6 +28,7 @@ from .util import init_lamost_dataset, init_sdss_dataset
 DATASET_DICT = {
     "LamostDataset": LamostDataset,
     "SDSSDataset": SDSSDataset,
+    "StdDataset": StdDataset,
 }
 
 
@@ -128,6 +131,9 @@ class DataProcess:
                 spectrum_data = init_lamost_dataset(hdulist)
             case "SDSSDataset":
                 spectrum_data = init_sdss_dataset(hdulist)
+            case "StdDataset":
+                raise NotImplementedError("StdDataset not implemented")
+                # init_std_dataset(hdulist)
 
         dataset.dataset = spectrum_data
         dataset.name = dataset_path.split("\\")[-1].split(".")[0]
@@ -172,3 +178,10 @@ class DataProcess:
         )
 
         return INFO
+
+    @staticmethod
+    def Preprocessing(dataset: Dataset) -> StdDataset:
+        """
+        数据预处理
+        """
+        raise NotImplementedError("Preprocessing method not implemented")

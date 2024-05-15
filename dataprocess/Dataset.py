@@ -5,7 +5,6 @@ from abc import ABC, abstractmethod
 from typing import Any, List
 
 import numpy as np
-from numpy.typing import NDArray
 
 from astropy.io import fits
 
@@ -13,7 +12,7 @@ from concurrent.futures import ThreadPoolExecutor
 from joblib import Parallel, delayed
 from joblib.externals.loky import set_loky_pickler
 
-from .SpectralData import SpectralData, SpectralDataType
+from .SpectralData import SpectralData
 from .util import parser_fits_path, generate_dataset_name
 from config.config import DATASETBASEPATH
 
