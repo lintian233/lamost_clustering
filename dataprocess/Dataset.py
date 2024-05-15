@@ -7,7 +7,7 @@ from typing import Any, List
 import numpy as np
 
 from astropy.io import fits
-
+from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
 from joblib import Parallel, delayed
 from joblib.externals.loky import set_loky_pickler
@@ -125,9 +125,12 @@ class Dataset(ABC):
         # print(f"Total files: {len(fits_path)}")
         # start_time = time.time()
 
+        # 定义一个包装函数，用于读取数据并更新进度条
+
+        # 初始化进度条
         set_loky_pickler("dill")
         parallel = Parallel(n_jobs=-1, backend="loky")
-        results = parallel(delayed(self.read_data)(path) for path in fits_path)
+        results = parallel(delayed(self.read_data)(path) for path in tqdm(fits_path))
 
         self.dataset = list(results)
         # print(f"load data time: {time.time() - start_time}")
