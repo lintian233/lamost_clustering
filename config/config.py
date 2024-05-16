@@ -3,3 +3,4 @@
 REDUCEDATAPATH = "./data/ReduceData/"
 DATASETBASEPATH = "./data/"
 CLUSTER_DATA_PATH = "./data/ClusterData/"
+SDSS_TABLE_PATH = "./origin_data/SDSS/STAR-SNR-10-20w.csv"

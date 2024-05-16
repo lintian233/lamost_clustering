@@ -8,6 +8,39 @@ from astropy.io.fits.fitsrec import FITS_rec
 from astropy.io.fits.header import Header
 from astropy.io.fits import HDUList, PrimaryHDU
 from astropy.io.fits.hdu.table import BinTableHDU
+from config.config import SDSS_TABLE_PATH
+import pandas as pd
+
+
+class SDSSTable:
+    _instance = None
+    __path = SDSS_TABLE_PATH
+    table: pd.DataFrame
+
+    def __init__(self):
+        self.table = pd.read_csv(self.__path)
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
+
+    def get_class(self, *, plate: str, fiberid: str, mjd: str) -> str:
+        mask = (
+            (self.table["plate"] == plate)
+            & (self.table["fiberid"] == fiberid)
+            & (self.table["mjd"] == mjd)
+        )
+        return self.table[mask]["class"].values[0]
+
+    def get_subclass(self, *, plate: str, fiberid: str, mjd: str) -> str:
+        mask = (
+            (self.table["plate"] == plate)
+            & (self.table["fiberid"] == fiberid)
+            & (self.table["mjd"] == mjd)
+        )
+        return self.table[mask]["subclass"].values[0]
 
 
 # LAMOST_DATA_TYPE
@@ -97,7 +130,10 @@ class SDSSSpectraData(SpectralData):
 
     @property
     def CLASS(self) -> str:
-        return self.objinfo.data.CLASS[0]
+        plate = self.overall_header["PLATEID"]
+        mjd = self.overall_header["MJD"]
+        fiber = self.overall_header["FIBERID"]
+        return SDSSTable.get_instance().get_class(plate=plate, fiberid=fiber, mjd=mjd)
 
     @property
     def OBSID(self) -> str:
@@ -108,7 +144,12 @@ class SDSSSpectraData(SpectralData):
 
     @property
     def SUBCLASS(self) -> str:
-        return self.objinfo.data.SUBCLASS[0]
+        plate = self.overall_header["PLATEID"]
+        mjd = self.overall_header["MJD"]
+        fiber = self.overall_header["FIBERID"]
+        return SDSSTable.get_instance().get_subclass(
+            plate=plate, fiberid=fiber, mjd=mjd
+        )
 
 
 class StdSpectralData(SpectralData):
