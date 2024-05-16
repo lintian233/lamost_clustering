@@ -121,16 +121,21 @@ class DataProcess:
 
         dataset: Dataset = DATASET_DICT.get(telescope)()
 
+        info = DataProcess.list_datasets()
+        num_spectra = info[info["DATASET_NAME"] == dataset_index]["NUM_SPECTRA"]
+        num_spectra = int(num_spectra.values[0])
+        print(f"Loading {num_spectra} spectra")
+
         dataset_path = find_dataset_path(dataset_index)
         spectrum_data = []
 
-        hdulist = fits.open(dataset_path)
+        hdulist = fits.open(dataset_path, memmap=True, lazy_load_hdus=True)
 
         match telescope:
             case "LamostDataset":
-                spectrum_data = init_lamost_dataset(hdulist)
+                spectrum_data = init_lamost_dataset(hdulist, num_spectra)
             case "SDSSDataset":
-                spectrum_data = init_sdss_dataset(hdulist)
+                spectrum_data = init_sdss_dataset(hdulist, num_spectra)
             case "StdDataset":
                 raise NotImplementedError("StdDataset not implemented")
                 # init_std_dataset(hdulist)
