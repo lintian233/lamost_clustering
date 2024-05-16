@@ -165,7 +165,6 @@ def parser_fits_path(dirpath: str) -> List[str]:
     return all_fits_files_path
 
 
-@njit
 def generate_dataset_name_base(dataset: NDArray[Any]) -> str:
     """
     用于获取数据集的名称。
@@ -193,10 +192,9 @@ def generate_dataset_name_base(dataset: NDArray[Any]) -> str:
     qso_num = 0
     galaxy_num = 0
 
-    star_num = len(np.where(dataset == "STAR")[0])
-    qso_num = len(np.where(dataset == "QSO")[0])
-    galaxy_num = len(np.where(dataset == "GALAXY")[0])
-
+    star_num = len(dataset[dataset == "STAR"])
+    qso_num = len(dataset[dataset == "QSO"])
+    galaxy_num = len(dataset[dataset == "GALAXY"])
     return f"SN{total_num}-STAR{star_num}-QSO{qso_num}-GALAXY{galaxy_num}"
 
 
