@@ -7,10 +7,14 @@ from reducer.util import get_data_from_dataset_index
 
 
 class TestSomething(unittest.TestCase):
-    def test_load_dataset(self):
+    def test_get_data_from_dataset_index(self):
         # dataset = dp.load_dataset("LamostDataset-000")
-        data = get_data_from_dataset_index("SDSSDataset-000")
-        data1 = get_data_from_dataset_index("SDSSDataset-000")
+        print("\n")
+        print("The First Time to Load Data:")
+        data = get_data_from_dataset_index("SDSSDataset-002")
+        # print("\n")
+        # print("The Second Time to Load Data:")
+        data1 = get_data_from_dataset_index("SDSSDataset-002")
         pass
 
     @unittest.skip("skip")

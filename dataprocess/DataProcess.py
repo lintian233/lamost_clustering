@@ -119,7 +119,7 @@ class DataProcess:
         ldm = LoadedDatasetManager.instance()
         loaded_dataset = ldm.get(dataset_index)
         if loaded_dataset is not None:
-            print(f"Loaded {dataset_index} from memory")
+            # print(f"Loaded {dataset_index} from memory")
             return loaded_dataset
 
         telescope = dataset_index.split("-")[0]
@@ -151,7 +151,7 @@ class DataProcess:
         dataset.dataset = spectrum_data
         dataset.name = dataset_path.split("\\")[-1].split(".")[0]
 
-        ldm.add(dataset)
+        ldm.add(dataset_index, dataset)
 
         return dataset
 
