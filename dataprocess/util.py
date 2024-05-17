@@ -265,3 +265,14 @@ def init_sdss_dataset(hdulist: HDUList, length, n_jobs: int = 1) -> List[Spectra
         for i in tqdm(ilist)
     )
     return spectrum_data
+
+def init_std_dataset(hdulist: HDUList, length, n_jobs: int) -> List[SpectralData]:
+    ilist = np.arange(0, length, 1)
+    set_loky_pickler("dill")
+    spectrum_data = Parallel(n_jobs=n_jobs)(
+        delayed(SDSSSpectraData)(
+            HDUList([hdulist[i]])
+        )
+        for i in tqdm(ilist)
+    )
+    return spectrum_data
