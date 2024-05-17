@@ -8,8 +8,9 @@ from reducer.util import get_data_from_dataset_index
 
 class TestSomething(unittest.TestCase):
     def test_load_dataset(self):
-        dataset = dp.load_dataset("LamostDataset-000")
-        data = get_data_from_dataset_index("LamostDataset-000")
+        # dataset = dp.load_dataset("LamostDataset-000")
+        data = get_data_from_dataset_index("SDSSDataset-000")
+        data1 = get_data_from_dataset_index("SDSSDataset-000")
         pass
 
     @unittest.skip("skip")

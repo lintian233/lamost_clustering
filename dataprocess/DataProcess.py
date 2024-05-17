@@ -14,6 +14,7 @@ from .SpectralData import SpectralData, LamostSpectraData, SDSSSpectraData
 from .LamostDataset import LamostDataset
 from .SDSSDataset import SDSSDataset
 from .StdDataset import StdDataset
+from .LoadedDatasetManager import LoadedDatasetManager
 from .util import find_dataset_path, generate_dataset_name
 from .util import init_lamost_dataset, init_sdss_dataset
 
@@ -115,6 +116,12 @@ class DataProcess:
         >>> load_dataset("NonsenDataset-000")
         ValueError: 'DatsetType NonsenDataset not found'
         """
+        ldm = LoadedDatasetManager.instance()
+        loaded_dataset = ldm.get(dataset_index)
+        if loaded_dataset is not None:
+            print(f"Loaded {dataset_index} from memory")
+            return loaded_dataset
+
         telescope = dataset_index.split("-")[0]
         if telescope not in DATASET_DICT.keys():
             raise ValueError(f"DatsetType {telescope} not found")
@@ -124,7 +131,8 @@ class DataProcess:
         info = DataProcess.list_datasets()
         num_spectra = info[info["DATASET_NAME"] == dataset_index]["NUM_SPECTRA"]
         num_spectra = int(num_spectra.values[0])
-        print(f"Loading {num_spectra} spectra")
+
+        print(f"Loading {telescope}-{num_spectra} spectra")
 
         dataset_path = find_dataset_path(dataset_index)
         spectrum_data = []
@@ -142,6 +150,9 @@ class DataProcess:
 
         dataset.dataset = spectrum_data
         dataset.name = dataset_path.split("\\")[-1].split(".")[0]
+
+        ldm.add(dataset)
+
         return dataset
 
     @staticmethod

@@ -2,6 +2,7 @@ import os
 
 import umap
 import numpy as np
+import numba
 
 from .Reducer import Reducer
 import dataprocess.DataProcess as dp

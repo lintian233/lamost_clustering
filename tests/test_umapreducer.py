@@ -18,7 +18,7 @@ class TestUMAPReducer(unittest.TestCase):
             learning_rate=1.0,
             min_dist=0.1,
         )
-        reducer.reduce("SDSSDataset-000")
+        reducer.reduce("SDSSDataset-002")
         pass
 
     @unittest.skip("Time-consuming test")

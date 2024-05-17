@@ -65,9 +65,22 @@ SpectralDataType = dtype(
 
 @dataclass
 class SpectralData:
-    hdul: HDUList
-    header: Header
-    data: FITS_rec
+    # Lamoest
+    hdul: HDUList = None
+    header: Header = None
+    data: FITS_rec = None
+
+    # SDSS
+    overall_header: Header = None
+    spectra: BinTableHDU = None
+    objinfo: BinTableHDU = None
+    spzline: BinTableHDU = None
+
+    _class_name: str = None
+    _subclass_name: str = None
+    _obsid: str = None
+    _flux: NDArray = None
+    _wavelength: NDArray = None
 
     def __init__(self, hdul: HDUList):
         self.hdul = hdul
@@ -85,23 +98,33 @@ class LamostSpectraData(SpectralData):
 
     @property
     def FLUX(self) -> NDArray:
-        return self.data.FLUX[0]
+        if self._flux is None:
+            self._flux = self.data.FLUX[0]
+        return self._flux
 
     @property
     def WAVELENGTH(self) -> NDArray:
-        return self.data.WAVELENGTH[0]
+        if self._wavelength is None:
+            self._wavelength = self.data.WAVELENGTH[0]
+        return self._wavelength
 
     @property
     def SUBCLASS(self) -> str:
-        return self.header["SUBCLASS"]
+        if self._subclass_name is None:
+            self._subclass_name = self.header["SUBCLASS"]
+        return self._subclass_name
 
     @property
     def CLASS(self) -> str:
-        return self.header["CLASS"]
+        if self._class_name is None:
+            self._class_name = self.header["CLASS"]
+        return self._class_name
 
     @property
     def OBSID(self) -> str:
-        return self.header["OBSID"]
+        if self._obsid is None:
+            self._obsid = self.header["OBSID"]
+        return self._obsid
 
 
 @dataclass
@@ -121,35 +144,52 @@ class SDSSSpectraData(SpectralData):
 
     @property
     def FLUX(self) -> NDArray:
-        return self.spectra.data.flux
+        if self._flux is None:
+            self._flux = self.spectra.data.flux
+
+        return self._flux
 
     @property
     def WAVELENGTH(self) -> NDArray:
         # 转换为线性波长,两位小数
-        return 10**self.spectra.data.loglam
+        if self._wavelength is None:
+            self._wavelength = 10**self.spectra.data.loglam
+
+        return self._wavelength
 
     @property
     def CLASS(self) -> str:
-        plate = self.overall_header["PLATEID"]
-        mjd = self.overall_header["MJD"]
-        fiber = self.overall_header["FIBERID"]
-        return SDSSTable.get_instance().get_class(plate=plate, fiberid=fiber, mjd=mjd)
+        if self._class_name is None:
+            plate = self.overall_header["PLATEID"]
+            mjd = self.overall_header["MJD"]
+            fiber = self.overall_header["FIBERID"]
+            self._class_name = SDSSTable.get_instance().get_class(
+                plate=plate, fiberid=fiber, mjd=mjd
+            )
+
+        return self._class_name
 
     @property
     def OBSID(self) -> str:
-        plate = self.overall_header["PLATEID"]
-        mjd = self.overall_header["MJD"]
-        fiber = self.overall_header["FIBERID"]
-        return f"{plate}-{mjd}-{fiber}"
+        if self._obsid is None:
+            plate = self.overall_header["PLATEID"]
+            mjd = self.overall_header["MJD"]
+            fiber = self.overall_header["FIBERID"]
+            self._obsid = f"{plate}-{mjd}-{fiber}"
+
+        return self._obsid
 
     @property
     def SUBCLASS(self) -> str:
-        plate = self.overall_header["PLATEID"]
-        mjd = self.overall_header["MJD"]
-        fiber = self.overall_header["FIBERID"]
-        return SDSSTable.get_instance().get_subclass(
-            plate=plate, fiberid=fiber, mjd=mjd
-        )
+        if self._subclass_name is None:
+            plate = self.overall_header["PLATEID"]
+            mjd = self.overall_header["MJD"]
+            fiber = self.overall_header["FIBERID"]
+            self._subclass_name = SDSSTable.get_instance().get_subclass(
+                plate=plate, fiberid=fiber, mjd=mjd
+            )
+
+        return self._subclass_name
 
 
 class StdSpectralData(SpectralData):

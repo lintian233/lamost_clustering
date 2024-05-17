@@ -2,10 +2,15 @@ import os
 
 import numpy as np
 import umap
+from numpy.typing import NDArray
 
 import dataprocess.DataProcess as dp
+from dataprocess.SpectralData import SpectralData
 from config.config import REDUCEDATAPATH
 from reducer.ReduceData import ReduceData
+from joblib import Parallel, delayed
+from joblib.externals.loky import set_loky_pickler
+from tqdm import tqdm
 
 
 def get_data_from_dataset_index(dataset_index: str) -> tuple:
@@ -23,24 +28,18 @@ def get_data_from_dataset_index(dataset_index: str) -> tuple:
         obsid: 观测ID
         )
     """
-
     dataset = dp.load_dataset(dataset_index)
     data = np.zeros((len(dataset), 3000))
     classes = np.full(len(dataset), "0", dtype="U15")
     subclasses = np.full(len(dataset), "0", dtype="U15")
     obsid = np.full(len(dataset), "0", dtype="U15")
 
-    for i in range(len(dataset)):
-        # data[i] = dataset[i].data.FLUX[0][0:3000]
-        data[i] = dataset[i].FLUX[0:3000]
-    for i in range(len(dataset)):
-        classes[i] = dataset[i].CLASS
-
-    for i in range(len(dataset)):
-        subclasses[i] = dataset[i].SUBCLASS
-
-    for i in range(len(dataset)):
-        obsid[i] = dataset[i].OBSID
+    for i, spectral_data in enumerate(tqdm(dataset)):
+        wave = spectral_data.WAVELENGTH[:3000]
+        data[i] = spectral_data.FLUX[:3000]
+        classes[i] = spectral_data.CLASS
+        subclasses[i] = spectral_data.SUBCLASS
+        obsid[i] = spectral_data.OBSID
 
     return data, classes, subclasses, obsid
 
