@@ -144,7 +144,7 @@ def show_reduce_data_overlay(reduce_data: ReduceData, label) -> None:
     ax.set_ylabel("")
     ax.set_xlabel("")
 
-    plt.savefig(f"overlay.png", bbox_inches="tight", dpi=400)
+    plt.savefig(f"{label}-overlay.png", bbox_inches="tight", dpi=400)
     # plt.show()
 
 
@@ -216,14 +216,20 @@ def show_reduce_data_separate(reduce_data: ReduceData, label) -> None:
         ax.set_xlabel("")
         ax.set_ylabel("")
 
-        # Hide empty subplots
-        for ax in axes.flat:
-            if not ax.title.get_text():
-                ax.set_axis_off()
-
+        # 隐藏空的图的坐标轴
+        if i == length - 1:
+            for k in range(i + 1, default_row * col):
+                row, j = divmod(k, col)
+                if col == 1 and default_row == 1:
+                    ax = axes
+                elif col == 1:
+                    ax = axes[row]
+                else:
+                    ax = axes[row, j]
+                ax.axis("off")
     plt.subplots_adjust(wspace=0.1, hspace=0.1)
     # plt.tight_layout()
-    plt.savefig(f"separate.png", bbox_inches="tight", dpi=400)
+    plt.savefig(f"{label}-separate.png", bbox_inches="tight", dpi=400)
     # plt.show()
 
 
