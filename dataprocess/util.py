@@ -319,7 +319,13 @@ def resample(
         return wavelength, flux, True
 
     elif origin == "SDSS":
+        if not get_useful(ormask):
+            useful = False
+            flux = np.zeros(3700)
+            wavelength = np.zeros(3700)
+            return wavelength, flux, useful
         flux = np.zeros(3700)
+
         for i in range(3700):
             x = 3850 + i * step
 
@@ -378,3 +384,24 @@ def to_std_spectral_data(spec_data: SpectralData) -> StdSpectraData:
     hdulist = fits.HDUList([primary_hdu, bintable_hdu])
 
     return StdSpectraData(hdulist)
+
+def get_useful(ormask: NDArray) -> bool:
+    num_spectra = len(ormask)
+    num_bits = 29
+    
+    mask_table = np.zeros((num_spectra, num_bits), dtype=int)
+    
+    for i, ormask in enumerate(ormask):
+        for bit in range(num_bits):
+            if (ormask & (1 << bit)) != 0:
+                mask_table[i, bit] = 1
+    
+    # important_bits = [1, 2, 3, 4, 6, 7, 16, 20, 21, 23]
+    # important_bits = [2, 3, 4, 5, 18, 23, 27, 28]
+    important_bits = [2, 4, 5]
+
+    for bit in important_bits:
+        if sum(mask_table[:, bit]) > 0:
+            return False
+
+    return True

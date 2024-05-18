@@ -6,6 +6,7 @@ import numpy as np
 
 from dataprocess.util import *
 from dataprocess.SpectralData import SpectralDataType
+from dataprocess.DataProcess import DataProcess
 
 
 def clear():
@@ -35,3 +36,9 @@ class TestDataprocessutil(unittest.TestCase):
         self.assertTrue(check_dataset_index("SDSSDataset-002"))
         self.assertFalse(check_dataset_index("NONSENDataset-003"))
         self.assertFalse(check_dataset_index("LamostDataset-00a"))
+
+    def test_get_useful(self):
+        sdss_dataset = DataProcess.load_dataset("SDSSDataset-000")
+        result = get_useful(sdss_dataset.dataset[0].ORMASK)
+        pass
+    

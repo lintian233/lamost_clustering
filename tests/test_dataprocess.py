@@ -97,11 +97,13 @@ class TestDataProcess(unittest.TestCase):
     def test_sdss_preprocess(self):
         raw_sdss = DataProcess.load_dataset("SDSSDataset-000")
         DataProcess.preprocessing("SDSSDataset-000")
-        pre_sdss = DataProcess.load_dataset("StdDataset-001")
+        pre_sdss = DataProcess.load_dataset("StdDataset-000")
 
-        for i in range(len(raw_sdss.dataset)):
-            if pre_sdss.dataset[i].header["USEFUL"]:
-                show_spectraldata(raw_sdss[i])
-                show_spectraldata(pre_sdss[i])
-                break
+        dataset = []
+        for i in pre_sdss.dataset:
+            if i.header["USEFUL"]:
+                dataset.append(i)
+        pre_sdss.dataset = dataset
+
+        print(len(pre_sdss.dataset))
         pass

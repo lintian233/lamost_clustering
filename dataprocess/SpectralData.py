@@ -168,7 +168,7 @@ class SDSSSpectraData(SpectralData):
 
     @property
     def ORMASK(self) -> NDArray:
-        return None
+        return self.spectra.data.or_mask
 
     @property
     def CLASS(self) -> str:
