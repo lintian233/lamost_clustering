@@ -6,6 +6,7 @@ import re
 import numpy as np
 from pandas import DataFrame
 from astropy.io import fits
+from concurrent.futures import ThreadPoolExecutor
 
 
 from config.config import DATASETBASEPATH
@@ -16,7 +17,8 @@ from .SDSSDataset import SDSSDataset
 from .StdDataset import StdDataset
 from .LoadedDatasetManager import LoadedDatasetManager
 from .util import find_dataset_path, generate_dataset_name
-from .util import init_lamost_dataset, init_sdss_dataset
+from .util import init_lamost_dataset, init_sdss_dataset, init_std_dataset
+from .util import to_std_spectral_data
 
 """
 /Data/ 
@@ -145,8 +147,7 @@ class DataProcess:
             case "SDSSDataset":
                 spectrum_data = init_sdss_dataset(hdulist, num_spectra)
             case "StdDataset":
-                raise NotImplementedError("StdDataset not implemented")
-                # init_std_dataset(hdulist)
+                spectrum_data = init_std_dataset(hdulist, num_spectra)
 
         dataset.dataset = spectrum_data
         dataset.name = dataset_path.split("\\")[-1].split(".")[0]
@@ -196,8 +197,38 @@ class DataProcess:
         return INFO
 
     @staticmethod
-    def Preprocessing(dataset: Dataset) -> StdDataset:
+    def preprocessing(dataset_index: str) -> str:
         """
         数据预处理
         """
-        raise NotImplementedError("Preprocessing method not implemented")
+        raw_dataset = DataProcess.load_dataset(dataset_index)
+
+        with ThreadPoolExecutor() as executor:
+            std_results = executor.map(to_std_spectral_data, raw_dataset.dataset)
+
+        std_dataset: StdDataset = StdDataset()
+
+        std_dataset.dataset = list(std_results)
+
+        # std_results = []
+        # for data in raw_dataset.dataset:
+        #     std_data = to_std_spectral_data(data)
+        #     std_results.append(std_data)
+
+        # std_dataset: StdDataset = StdDataset()
+
+        # std_dataset.dataset = std_results
+
+        labels_list = np.array([i.CLASS for i in std_dataset.dataset])
+        dataset_name = generate_dataset_name(
+            std_dataset.__class__.__name__, std_dataset.dir_base_path, labels_list
+        )
+        save_path = std_dataset.dir_base_path + dataset_name + ".fits"
+
+        with fits.HDUList() as hdulist:
+            for data in std_dataset.dataset:
+                for hdu in data.hdul:
+                    hdulist.append(hdu)
+            hdulist.writeto(save_path, overwrite=True, output_verify="ignore")
+
+        return save_path

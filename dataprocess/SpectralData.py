@@ -81,6 +81,7 @@ class SpectralData:
     _obsid: str = None
     _flux: NDArray = None
     _wavelength: NDArray = None
+    _ormask: NDArray = None
 
     def __init__(self, hdul: HDUList):
         self.hdul = hdul
@@ -107,6 +108,12 @@ class LamostSpectraData(SpectralData):
         if self._wavelength is None:
             self._wavelength = self.data.WAVELENGTH[0]
         return self._wavelength
+
+    @property
+    def ORMASK(self) -> NDArray:
+        if self._ormask is None:
+            self._ormask = self.data.ORMASK[0]
+        return self._ormask
 
     @property
     def SUBCLASS(self) -> str:
@@ -158,6 +165,10 @@ class SDSSSpectraData(SpectralData):
         return self._wavelength
 
     @property
+    def ORMASK(self) -> NDArray:
+        return None
+
+    @property
     def CLASS(self) -> str:
         if self._class_name is None:
             plate = self.overall_header["PLATEID"]
@@ -192,22 +203,24 @@ class SDSSSpectraData(SpectralData):
         return self._subclass_name
 
 
-class StdSpectralData(SpectralData):
+class StdSpectraData(SpectralData):
     def __init__(self, hdul: HDUList):
-        super().__init__(hdul)
+        self.hdul = hdul
+        self.header = hdul[0].header
+        self.data = hdul[1].data
 
     @property
     def FLUX(self) -> NDArray:
-        return self.data.FLUX[0]
+        return self.data["FLUX"]
 
     @property
     def WAVELENGTH(self) -> NDArray:
-        return self.data.WAVELENGTH[0]
+        return self.data["WAVELENGTH"]
 
     @property
     def CLASS(self) -> str:
         return self.header["CLASS"]
-    
+
     @property
     def SUBCLASS(self) -> str:
         return self.header["SUBCLASS"]
@@ -219,3 +232,7 @@ class StdSpectralData(SpectralData):
     @property
     def ORIGIN(self) -> str:
         return self.header["ORIGIN"]
+
+    @property
+    def USEFUL(self) -> str:
+        return self.header["USEFUL"]

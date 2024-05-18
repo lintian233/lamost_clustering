@@ -10,6 +10,7 @@ from dataprocess.DataProcess import DataProcess
 from dataprocess.Dataset import Dataset
 from dataprocess.SpectralData import SpectralData, SpectralDataType
 from dataprocess.LamostDataset import LamostDataset
+from util import show_spectraldata
 
 
 class TestDataProcess(unittest.TestCase):
@@ -80,3 +81,27 @@ class TestDataProcess(unittest.TestCase):
                 pass
         end_time = time.time()
         print(f"NumPy array iteration time: {end_time - start_time} seconds")
+
+    def test_lamost_preprocess(self):
+        raw_lamost = DataProcess.load_dataset("LamostDataset-000")
+        DataProcess.preprocessing("LamostDataset-000")
+        pre_lamost = DataProcess.load_dataset("StdDataset-000")
+
+        for i in range(len(raw_lamost.dataset)):
+            if pre_lamost.dataset[i].header["USEFUL"]:
+                show_spectraldata(raw_lamost[i])
+                show_spectraldata(pre_lamost[i])
+                break
+        pass
+
+    def test_sdss_preprocess(self):
+        raw_sdss = DataProcess.load_dataset("SDSSDataset-000")
+        DataProcess.preprocessing("SDSSDataset-000")
+        pre_sdss = DataProcess.load_dataset("StdDataset-001")
+
+        for i in range(len(raw_sdss.dataset)):
+            if pre_sdss.dataset[i].header["USEFUL"]:
+                show_spectraldata(raw_sdss[i])
+                show_spectraldata(pre_sdss[i])
+                break
+        pass

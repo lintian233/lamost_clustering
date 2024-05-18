@@ -7,12 +7,20 @@ import os
 import numpy as np
 from numpy.typing import NDArray
 from astropy.io.fits.hdu.hdulist import HDUList
+from astropy.table import Table
+from astropy.io import fits
 from joblib import Parallel, delayed
 from joblib.externals.loky import set_loky_pickler
 from tqdm import tqdm
+from numba import jit
 
 from config.config import DATASETBASEPATH
-from .SpectralData import SpectralData, LamostSpectraData, SDSSSpectraData
+from .SpectralData import (
+    SpectralData,
+    LamostSpectraData,
+    SDSSSpectraData,
+    StdSpectraData,
+)
 
 
 def check_dataset_index(dataset_index: str) -> bool:
@@ -266,13 +274,107 @@ def init_sdss_dataset(hdulist: HDUList, length, n_jobs: int = 1) -> List[Spectra
     )
     return spectrum_data
 
-def init_std_dataset(hdulist: HDUList, length, n_jobs: int) -> List[SpectralData]:
-    ilist = np.arange(0, length, 1)
+
+def init_std_dataset(hdulist: HDUList, length, n_jobs: int = 1) -> List[SpectralData]:
+    ilist = np.arange(0, length * 2, 2)
     set_loky_pickler("dill")
     spectrum_data = Parallel(n_jobs=n_jobs)(
-        delayed(SDSSSpectraData)(
-            HDUList([hdulist[i]])
-        )
+        delayed(StdSpectraData)(HDUList([hdulist[i], hdulist[i + 1]]))
         for i in tqdm(ilist)
     )
     return spectrum_data
+
+
+def resample(
+    raw_wavelength: NDArray, raw_flux: NDArray, origin: str, ormask: NDArray
+) -> NDArray:
+    step = (8900 - 3850) / 3700
+    if origin == "LAMOST":
+        if sum(ormask) != 0:
+            useful = False
+            flux = np.zeros(3700)
+            wavelength = np.zeros(3700)
+            return wavelength, flux, useful
+
+        flux = np.zeros(3700)
+        for i in range(3700):
+            x = 3850 + i * step
+
+            left = np.where(raw_wavelength < x)[0][-1]
+            right = np.where(raw_wavelength > x)[0][0]
+
+            l_weight = (raw_wavelength[right] - x) / (
+                raw_wavelength[right] - raw_wavelength[left]
+            )
+            r_weight = (x - raw_wavelength[left]) / (
+                raw_wavelength[right] - raw_wavelength[left]
+            )
+
+            flux[i] = raw_flux[left] * l_weight + raw_flux[right] * r_weight
+
+        length = np.sqrt(sum(flux**2))
+        flux = flux / length
+        wavelength = np.linspace(3850, 8900, 3700)
+
+        return wavelength, flux, True
+
+    elif origin == "SDSS":
+        flux = np.zeros(3700)
+        for i in range(3700):
+            x = 3850 + i * step
+
+            left = np.where(raw_wavelength < x)[0][-1]
+            right = np.where(raw_wavelength > x)[0][0]
+
+            l_weight = (raw_wavelength[right] - x) / (
+                raw_wavelength[right] - raw_wavelength[left]
+            )
+            r_weight = (x - raw_wavelength[left]) / (
+                raw_wavelength[right] - raw_wavelength[left]
+            )
+
+            flux[i] = raw_flux[left] * l_weight + raw_flux[right] * r_weight
+
+        length = np.sqrt(sum(flux**2))
+        flux = flux / length
+        wavelength = np.linspace(3850, 8900, 3700)
+
+        return wavelength, flux, True
+
+
+def to_std_spectral_data(spec_data: SpectralData) -> StdSpectraData:
+
+    class_name = spec_data.__class__.__name__
+    if class_name == "LamostSpectraData":
+        origin = "LAMOST"
+    elif class_name == "SDSSSpectraData":
+        origin = "SDSS"
+    else:
+        raise ValueError(f"Unsupported SpectralData class: {class_name}")
+
+    obsid = spec_data.OBSID
+    clas = spec_data.CLASS
+    subclas = spec_data.SUBCLASS
+    ormask = spec_data.ORMASK
+    wavelength, flux, useful = resample(
+        spec_data.WAVELENGTH, spec_data.FLUX, origin, ormask
+    )
+
+    header = fits.Header()
+    header["OBSID"] = obsid
+    header["CLASS"] = clas
+    header["SUBCLASS"] = subclas
+    header["ORIGIN"] = origin
+    header["USEFUL"] = useful
+
+    primary_hdu = fits.PrimaryHDU(header=header)
+
+    col1 = fits.Column(name="FLUX", format="E", array=flux)
+    col2 = fits.Column(name="WAVELENGTH", format="E", array=wavelength)
+
+    cols = fits.ColDefs([col1, col2])
+    bintable_hdu = fits.BinTableHDU.from_columns(cols)
+
+    hdulist = fits.HDUList([primary_hdu, bintable_hdu])
+
+    return StdSpectraData(hdulist)
