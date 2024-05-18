@@ -397,6 +397,34 @@ def get_useful(ormask: NDArray) -> bool:
             if (ormask & (1 << bit)) != 0:
                 mask_table[i, bit] = 1
 
+    """
+    0: "NOPLUG: 光纤未在插入图文件中列出",
+    1: "BADTRACE: TRACE320CRUDE例程中轨迹不良",
+    2: "BADFLAT: 平场测量中的计数低",
+    3: "BADARC: 弧线解决方案不良",
+    4: "MANYBADCOLUMNS: 超过10%的像素是坏列",
+    5: "MANYREJECTED: 提取中超过10%的像素被拒绝",
+    6: "LARGESHIFT: 平场和目标位置之间有大的空间偏移",
+    7: "BADSKYFIBER: 天空光纤显示极端残差",
+    8: "NEARWHOPPER: 已弃用，从BOSS DR9起不再设置。DR9之前表示在大纤维附近的2根光纤之内（不包括大纤维本身）",
+    9: "WHOPPER: 非常亮的源所对应的大纤维",
+    10: "SMEARIMAGE: 已弃用。DR9之前表示红色和蓝色相机的图像污迹可用",
+    11: "SMEARHIGHSN: 已弃用。DR9之前表示信噪比足够高，可用于完整的污迹拟合",
+    12: "SMEARMEDSN: 已弃用。DR9之前表示信噪比仅足够用于缩放的中值拟合",
+    16: "NEARBADPIXEL: 跟踪轨迹内有3个像素以内的坏像素",
+    17: "LOWFLAT: 平场小于0.5",
+    18: "FULLREJECT: 提取中像素被完全拒绝（INVVAR=0）",
+    19: "PARTIALREJECT: 提取中某些像素被拒绝",
+    20: "SCATTEREDLIGHT: 散射光显著",
+    21: "CROSSTALK: 串扰显著",
+    22: "NOSKY: 此波长处的天空水平未知（INVVAR=0）",
+    23: "BRIGHTSKY: 天空水平 > 通量 + 10 * (通量误差) 并且天空 > 1.25 * 中值（天空，99像素）",
+    24: "NODATA: 已弃用，应该忽略，优先标记INVVAR=0。DR9之前表示在合并的B样条中无数据（INVVAR=0）",
+    25: "COMBINEREJ: 在合并的B样条中被拒绝",
+    26: "BADFLUXFACTOR: 低的通量校准或通量校正因子",
+    27: "BADSKYCHI: 该波长处天空残差的相对χ² > 3",
+    28: "REDMONSTER: 天空残差中的连续区域有坏的χ²（相对χ² > 3的阈值）"
+    """
     # important_bits = [1, 2, 3, 4, 6, 7, 16, 20, 21, 23]
     # important_bits = [2, 3, 4, 5, 18, 23, 27, 28]
     important_bits = [2, 4, 5]
