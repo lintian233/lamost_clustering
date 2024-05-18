@@ -8,7 +8,7 @@ from astropy.io.fits.fitsrec import FITS_rec
 
 
 from dataprocess import SpectralData
-from dataprocess.SpectralData import LamostSpectraData, SDSSSpectraData
+from dataprocess.SpectralData import LamostSpectraData, SDSSSpectraData, StdSpectraData
 from reducer import ReduceData
 from cluster import ClusterData
 
@@ -77,11 +77,13 @@ COLORS = [
 
 
 def show_spectraldata(data: SpectralData) -> None:
-    telescope = (
-        "LAMOST"
-        if isinstance(data, LamostSpectraData)
-        else "SDSS" if isinstance(data, SDSSSpectraData) else "Other"
-    )
+    telescope = ""
+    if isinstance(data, LamostSpectraData):
+        telescope = "LAMOST"
+    elif isinstance(data, SDSSSpectraData):
+        telescope = "SDSS"
+    elif isinstance(data, StdSpectraData):
+        telescope = "STD-" + data.ORIGIN
     flux = data.FLUX
     wavelength = data.WAVELENGTH
     name = data.OBSID
