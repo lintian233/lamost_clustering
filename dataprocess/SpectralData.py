@@ -68,7 +68,7 @@ class SpectralData:
     # Lamoest
     hdul: HDUList = None
     header: Header = None
-    data: FITS_rec = None
+    data: BinTableHDU = None
 
     # SDSS
     overall_header: Header = None
@@ -95,24 +95,26 @@ class SpectralData:
 @dataclass
 class LamostSpectraData(SpectralData):
     def __init__(self, hdul: HDUList):
-        super().__init__(hdul)
+        self.hdul = hdul
+        self.header = hdul[0].header
+        self.data = hdul[1]
 
     @property
     def FLUX(self) -> NDArray:
         if self._flux is None:
-            self._flux = self.data.FLUX[0]
+            self._flux = self.data.data.FLUX[0]
         return self._flux
 
     @property
     def WAVELENGTH(self) -> NDArray:
         if self._wavelength is None:
-            self._wavelength = self.data.WAVELENGTH[0]
+            self._wavelength = self.data.data.WAVELENGTH[0]
         return self._wavelength
 
     @property
     def ORMASK(self) -> NDArray:
         if self._ormask is None:
-            self._ormask = self.data.ORMASK[0]
+            self._ormask = self.data.data.ORMASK[0]
         return self._ormask
 
     @property

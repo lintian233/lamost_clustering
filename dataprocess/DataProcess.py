@@ -7,6 +7,9 @@ import numpy as np
 from pandas import DataFrame
 from astropy.io import fits
 from concurrent.futures import ThreadPoolExecutor
+from joblib import Parallel, delayed
+from joblib.externals.loky import set_loky_pickler
+from tqdm import tqdm
 
 
 from config.config import DATASETBASEPATH
@@ -203,8 +206,13 @@ class DataProcess:
         """
         raw_dataset = DataProcess.load_dataset(dataset_index)
 
-        with ThreadPoolExecutor() as executor:
-            std_results = executor.map(to_std_spectral_data, raw_dataset.dataset)
+        # with ThreadPoolExecutor() as executor:
+        #     std_results = executor.map(to_std_spectral_data, raw_dataset.dataset)
+        set_loky_pickler("dill")
+        parallel = Parallel(n_jobs=-1, backend="loky")
+        std_results = parallel(
+            delayed(to_std_spectral_data)(data) for data in tqdm(raw_dataset.dataset)
+        )
 
         std_dataset: StdDataset = StdDataset()
 
