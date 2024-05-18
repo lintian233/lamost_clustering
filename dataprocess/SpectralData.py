@@ -209,15 +209,15 @@ class StdSpectraData(SpectralData):
     def __init__(self, hdul: HDUList):
         self.hdul = hdul
         self.header = hdul[0].header
-        self.data = hdul[1].data
+        self.bin = hdul[1]
 
     @property
     def FLUX(self) -> NDArray:
-        return self.data["FLUX"]
+        return self.bin.data["FLUX"]
 
     @property
     def WAVELENGTH(self) -> NDArray:
-        return self.data["WAVELENGTH"]
+        return self.bin.data["WAVELENGTH"]
 
     @property
     def CLASS(self) -> str:
