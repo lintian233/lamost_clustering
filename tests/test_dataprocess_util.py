@@ -41,4 +41,3 @@ class TestDataprocessutil(unittest.TestCase):
         sdss_dataset = DataProcess.load_dataset("SDSSDataset-000")
         result = get_useful(sdss_dataset.dataset[0].ORMASK)
         pass
-    

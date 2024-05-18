@@ -385,17 +385,18 @@ def to_std_spectral_data(spec_data: SpectralData) -> StdSpectraData:
 
     return StdSpectraData(hdulist)
 
+
 def get_useful(ormask: NDArray) -> bool:
     num_spectra = len(ormask)
     num_bits = 29
-    
+
     mask_table = np.zeros((num_spectra, num_bits), dtype=int)
-    
+
     for i, ormask in enumerate(ormask):
         for bit in range(num_bits):
             if (ormask & (1 << bit)) != 0:
                 mask_table[i, bit] = 1
-    
+
     # important_bits = [1, 2, 3, 4, 6, 7, 16, 20, 21, 23]
     # important_bits = [2, 3, 4, 5, 18, 23, 27, 28]
     important_bits = [2, 4, 5]
