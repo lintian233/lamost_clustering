@@ -82,6 +82,7 @@ def get_data2d(dataset_index: str):
             min_dist=0.1,
         )
         data2d = reducer.fit_transform(get_data_from_dataset_index(dataset_index)[0])
+
     elif len(os.listdir(REDUCEDATAPATH + dataset_index)) == 0:
         reducer = umap.UMAP(
             n_components=2,

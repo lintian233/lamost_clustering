@@ -5,7 +5,7 @@ import time
 from dataprocess.DataProcess import DataProcess
 from dataprocess.SDSSDataset import SDSSDataset
 from dataprocess.SpectralData import SDSSSpectraData
-from util import show_spectraldata
+from util import show_spectra_data
 
 
 class TestSDSSDataset(unittest.TestCase):
@@ -24,7 +24,7 @@ class TestSDSSDataset(unittest.TestCase):
         self.assertIsInstance(dataset[0], SDSSSpectraData)
 
         for data in dataset:
-            show_spectraldata(data)
+            show_spectra_data(data)
             break
 
     def test_add_dataset_sdss_parallel(self):

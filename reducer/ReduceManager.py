@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from typing import Tuple
+from typing import Tuple, List
 
 from reducer.ReduceData import ReduceData
 from reducer.util import get_reduce_data
@@ -80,14 +80,14 @@ class ReduceManager:
 
         combined_df = pd.concat([PCA_df, TSNE_df, UMAP_df], ignore_index=True)
 
-        print(combined_df.to_string(index=False))
+        # print(combined_df.to_string(index=False))
 
         all_result = PCA_files + TSNE_files + UMAP_files
 
         return combined_df
 
     @staticmethod
-    def get_result(index) -> Tuple[ReduceData, str]:
+    def get_result(index) -> ReduceData:
         """
         根据索引获取降维结果
         返回对应降维结果的ReduceData对象
@@ -106,5 +106,9 @@ class ReduceManager:
                     i += 1
         for item in all_result:
             if item[0] == index:
+                reduce_data = get_reduce_data(item[1])
+                dataset = item[1].split("/")[-2]
                 file_name = item[1].split("/")[-1].split(".")[0]
-                return get_reduce_data(item[1]), file_name
+                reduce_data.info = [dataset, file_name]
+
+                return reduce_data

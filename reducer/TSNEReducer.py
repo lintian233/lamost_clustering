@@ -1,6 +1,6 @@
 import os
 
-from sklearn.manifold import TSNE
+from openTSNE import TSNE
 import numpy as np
 
 from .Reducer import Reducer
@@ -17,12 +17,16 @@ class TSNEReducer(Reducer):
     ) -> None:
         super().__init__()
         self.dimension = dimension
-        self.reducer = TSNE
         self.hyperparameters = {
             "perplexity": perplexity,
             "learning_rate": learning_rate,
             "n_iter": n_iter,
         }
+        self.reducer = TSNE(
+            n_components=dimension,
+            n_jobs=-1,
+            **self.hyperparameters,
+        )
 
     def reduce(self, dataset_index: str) -> ReduceData:
         """
@@ -53,12 +57,7 @@ class TSNEReducer(Reducer):
 
         data, classes, subclasses, obsid = get_data_from_dataset_index(dataset_index)
 
-        reduce_data = self.reducer(
-            n_components=self.dimension,
-            perplexity=self.hyperparameters["perplexity"],
-            learning_rate=self.hyperparameters["learning_rate"],
-            n_iter=self.hyperparameters["n_iter"],
-        ).fit_transform(data)
+        reduce_data = self.reducer.fit(data)
 
         data2d = get_data2d(dataset_index)
 
@@ -75,5 +74,6 @@ class TSNEReducer(Reducer):
         np.save(self.result_dir + dataset_index + "/" + save_name, result)
 
         result = ReduceData.from_numpy(*result)
+        result.info = [dataset_index, save_name]
 
         return result

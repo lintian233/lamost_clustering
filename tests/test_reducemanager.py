@@ -10,5 +10,5 @@ class TestReduceManager(unittest.TestCase):
         pass
 
     def test_get_result(self):
-        data, _ = ReduceManager.get_result(0)
+        data = ReduceManager.get_result(0)
         pass

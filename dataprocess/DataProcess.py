@@ -124,7 +124,7 @@ class DataProcess:
         ldm = LoadedDatasetManager.instance()
         loaded_dataset = ldm.get(dataset_index)
         if loaded_dataset is not None:
-            # print(f"Loaded {dataset_index} from memory")
+            print(f"Loaded {dataset_index} from memory")
             return loaded_dataset
 
         telescope = dataset_index.split("-")[0]

@@ -2,7 +2,7 @@ import numpy as np
 from dataclasses import dataclass
 
 from numpy.typing import NDArray
-from typing import Any
+from typing import Any, List
 
 
 """
@@ -27,6 +27,7 @@ class ReduceData:
     classes: NDArray[np.str_]
     subclasses: NDArray[np.str_]
     obsid: NDArray[np.str_]
+    info: List[str] = None
 
     def __init__(
         self,

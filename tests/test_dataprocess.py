@@ -10,7 +10,7 @@ from dataprocess.DataProcess import DataProcess
 from dataprocess.Dataset import Dataset
 from dataprocess.SpectralData import SpectralData, SpectralDataType
 from dataprocess.LamostDataset import LamostDataset
-from util import show_spectraldata
+from util import show_spectra_data
 
 
 class TestDataProcess(unittest.TestCase):
@@ -89,8 +89,8 @@ class TestDataProcess(unittest.TestCase):
 
         for i in range(len(raw_lamost.dataset)):
             if pre_lamost.dataset[i].header["USEFUL"]:
-                show_spectraldata(raw_lamost[i])
-                show_spectraldata(pre_lamost[i])
+                show_spectra_data(raw_lamost[i])
+                show_spectra_data(pre_lamost[i])
                 break
         pass
 

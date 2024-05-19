@@ -57,5 +57,6 @@ class PCAReducer(Reducer):
         np.save(self.result_dir + dataset_index + "/" + save_name, result)
 
         result = ReduceData.from_numpy(*result)
+        result.info = [dataset_index, save_name]
 
         return result

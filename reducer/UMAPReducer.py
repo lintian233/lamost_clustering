@@ -9,7 +9,7 @@ import dataprocess.DataProcess as dp
 from .util import get_data_from_dataset_index
 from .util import get_save_name
 from .util import get_data2d
-from reducer.ReduceData import ReduceData
+from .ReduceData import ReduceData
 
 
 class UMAPReducer(Reducer):
@@ -85,5 +85,6 @@ class UMAPReducer(Reducer):
         np.save(self.result_dir + dataset_index + "/" + save_name, result)
 
         result = ReduceData.from_numpy(*result)
+        result.info = [dataset_index, save_name]
 
         return result

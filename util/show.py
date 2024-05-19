@@ -2,15 +2,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import os
 
 
 from astropy.io.fits.header import Header
 from astropy.io.fits.fitsrec import FITS_rec
+from joblib import Parallel, delayed
+from joblib.externals.loky import set_loky_pickler
+from matplotlib.colors import ListedColormap, BoundaryNorm
 
 from dataprocess import SpectralData
 from dataprocess.SpectralData import LamostSpectraData, SDSSSpectraData, StdSpectraData
 from reducer import ReduceData
 from cluster import ClusterData
+from config.config import VISUALIZATION_PATH
 
 COLORS = [
     "#1f77b4",
@@ -76,7 +81,7 @@ COLORS = [
 ]
 
 
-def show_spectraldata(data: SpectralData) -> None:
+def show_spectra_data(data: SpectralData) -> None:
     telescope = ""
     if isinstance(data, LamostSpectraData):
         telescope = "LAMOST"
@@ -101,21 +106,43 @@ def show_spectraldata(data: SpectralData) -> None:
     # ax2.legend(loc="upper right")
     # Adjust subplots to fit the figure a
     plt.tight_layout()
-    plt.show()
+    # plt.show()
 
 
-def show_reduce_data(reduce_data: ReduceData, mode="overlay", label="class") -> None:
+def show_reduce_data(reduce_data: ReduceData) -> None:
+    info = reduce_data.info
+    save_dir = f"{VISUALIZATION_PATH}/{info[0]}/"
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    save_path = f"{save_dir}{info[1]}"
+
+    set_loky_pickler("dill")
+    mode = ["overlay", "separate", "separate", "overlay"]
+    label = ["class", "class", "subclass", "subclass"]
+    Parallel(n_jobs=4)(
+        delayed(_show_reduce_data)(
+            reduce_data, mode=mode[i], label=label[i], save_path=save_path
+        )
+        for i in range(4)
+    )
+
+    print(f"Visualization saved in {save_dir}")
+
+
+def _show_reduce_data(
+    reduce_data: ReduceData,
+    save_path: str,
+    mode="overlay",
+    label="class",
+) -> None:
     match mode:
         case "overlay":
-            show_reduce_data_overlay(reduce_data, label)
+            show_reduce_data_overlay(reduce_data, save_path, label)
         case "separate":
-            show_reduce_data_separate(reduce_data, label)
+            show_reduce_data_separate(reduce_data, save_path, label)
 
 
-from matplotlib.colors import ListedColormap, BoundaryNorm
-
-
-def show_reduce_data_overlay(reduce_data: ReduceData, label) -> None:
+def show_reduce_data_overlay(reduce_data: ReduceData, save_path, label) -> None:
     node_size = 10
     data = reduce_data.data2d
     match label:
@@ -159,10 +186,11 @@ def show_reduce_data_overlay(reduce_data: ReduceData, label) -> None:
     ax.set_ylabel("")
     ax.set_xlabel("")
 
-    plt.savefig(f"{label}-overlay.png", bbox_inches="tight", dpi=400)
+    # plt.savefig(f"{label}-overlay.png", bbox_inches="tight", dpi=400)
+    plt.savefig(f"{save_path}-{label}-overlay.png", bbox_inches="tight", dpi=400)
 
 
-def show_reduce_data_separate(reduce_data: ReduceData, label) -> None:
+def show_reduce_data_separate(reduce_data: ReduceData, save_path, label) -> None:
     node = 10
     data2d = reduce_data.data2d
     match label:
@@ -243,8 +271,7 @@ def show_reduce_data_separate(reduce_data: ReduceData, label) -> None:
                 ax.axis("off")
     plt.subplots_adjust(wspace=0.1, hspace=0.1)
     # plt.tight_layout()
-    plt.savefig(f"{label}-separate.png", bbox_inches="tight", dpi=400)
-    # plt.show()
+    plt.savefig(f"{save_path}-{label}-separate.png", bbox_inches="tight", dpi=400)
 
 
 def show_cluster_data(data: ClusterData) -> None:
