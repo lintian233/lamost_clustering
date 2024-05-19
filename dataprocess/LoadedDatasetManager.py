@@ -3,11 +3,11 @@ from .Dataset import Dataset
 
 
 class LoadedDatasetManager:
-    loaded_datasets: Dict[str, Dataset]
+    cache: Dict[str, Dataset]
     _instance = None
 
     def __init__(self) -> None:
-        self.loaded_datasets = {}
+        self.cache = {}
 
     @classmethod
     def instance(cls):
@@ -16,9 +16,9 @@ class LoadedDatasetManager:
         return cls._instance
 
     def add(self, index: str, dataset: Dataset) -> None:
-        self.loaded_datasets[index] = dataset
+        self.cache[index] = dataset
 
     def get(self, dataset_index: str) -> Dataset:
-        if dataset_index not in self.loaded_datasets:
+        if dataset_index not in self.cache:
             return None
-        return self.loaded_datasets[dataset_index]
+        return self.cache[dataset_index]

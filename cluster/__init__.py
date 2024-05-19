@@ -1,7 +1,11 @@
-# __init__.py内容
-
 from .ClusterData import ClusterData
-from .Cluster import Cluster
+from .ClusterManager import ClusterManager
+from .HDBSCANCluster import HDBSCANCluster
 from .SpectralCluster import SpectralCluster
 
-__all__ = ["SpectralCluster", "Cluster", "ClusterData"]
+__all__ = [
+    "ClusterData",
+    "ClusterManager",
+    "HDBSCANCluster",
+    "SpectralCluster",
+]

@@ -13,9 +13,9 @@ from matplotlib.colors import ListedColormap, BoundaryNorm
 
 from dataprocess import SpectralData
 from dataprocess.SpectralData import LamostSpectraData, SDSSSpectraData, StdSpectraData
-from reducer import ReduceData
-from cluster import ClusterData
-from config.config import VISUALIZATION_PATH
+from reducer.ReduceData import ReduceData
+from cluster.ClusterData import ClusterData
+from config.config import VISUALIZATION_REDUCE_PATH, VISUALIZATION_CLUSTER_PATH
 
 COLORS = [
     "#1f77b4",
@@ -109,53 +109,89 @@ def show_spectra_data(data: SpectralData) -> None:
     # plt.show()
 
 
-def show_reduce_data(reduce_data: ReduceData) -> None:
-    info = reduce_data.info
-    save_dir = f"{VISUALIZATION_PATH}/{info[0]}/"
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-    save_path = f"{save_dir}{info[1]}"
+def show_data(data) -> None:
+    if isinstance(data, ReduceData):
+        info = data.info
+        save_dir = f"{VISUALIZATION_REDUCE_PATH}/{info[0]}/"
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        save_path = f"{save_dir}{info[1]}"
 
-    set_loky_pickler("dill")
-    mode = ["overlay", "separate", "separate", "overlay"]
-    label = ["class", "class", "subclass", "subclass"]
-    Parallel(n_jobs=4)(
-        delayed(_show_reduce_data)(
-            reduce_data, mode=mode[i], label=label[i], save_path=save_path
+        set_loky_pickler("dill")
+        mode = ["overlay", "separate", "separate", "overlay"]
+        label = ["class", "class", "subclass", "subclass"]
+        Parallel(n_jobs=4)(
+            delayed(_show_reduce_data)(
+                data, mode=mode[i], label=label[i], save_path=save_path
+            )
+            for i in range(4)
         )
-        for i in range(4)
-    )
 
-    print(f"Visualization saved in {save_dir}")
+        print(f"Save {info[0]}-{info[1]} to {save_dir}")
+
+    elif isinstance(data, ClusterData):
+        info = data.info
+        save_dir = f"{VISUALIZATION_CLUSTER_PATH}/{info[0]}/"
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        save_path = f"{save_dir}{info[1]}"
+        set_loky_pickler("dill")
+        mode = ["overlay", "separate"]
+        Parallel(n_jobs=2)(
+            delayed(_show_cluster_data)(data, mode=mode[i], save_path=save_path)
+            for i in range(2)
+        )
+
+        print(f"Save {info[0]}-{info[1]} to {save_dir}")
+
+
+def _show_cluster_data(
+    cluster_data,
+    save_path: str,
+    mode="overlay",
+) -> None:
+    data2d = cluster_data.data2d
+    labels = cluster_data.labels
+    num = np.unique(labels)
+    save_path = f"{save_path}-cluster-{len(num)}"
+
+    match mode:
+        case "overlay":
+            show_data_overlay(data2d, labels, save_path)
+        case "separate":
+            show_data_separate(data2d, labels, save_path)
 
 
 def _show_reduce_data(
-    reduce_data: ReduceData,
+    reduce_data,
     save_path: str,
     mode="overlay",
     label="class",
 ) -> None:
-    match mode:
-        case "overlay":
-            show_reduce_data_overlay(reduce_data, save_path, label)
-        case "separate":
-            show_reduce_data_separate(reduce_data, save_path, label)
-
-
-def show_reduce_data_overlay(reduce_data: ReduceData, save_path, label) -> None:
-    node_size = 10
-    data = reduce_data.data2d
+    data2d = reduce_data.data2d
     match label:
         case "class":
             class_name = reduce_data.classes
+            save_path = f"{save_path}-class"
         case "subclass":
             class_name = reduce_data.classes
+            save_path = f"{save_path}-subclass"
+
             sub_class_name = reduce_data.subclasses
-            # class_name-sub_class_name
             class_name = np.array(
                 [f"{class_name[i]}-{sub_class_name[i]}" for i in range(len(class_name))]
             )
 
+    match mode:
+        case "overlay":
+            show_data_overlay(data2d, class_name, save_path)
+        case "separate":
+            show_data_separate(data2d, class_name, save_path)
+
+
+def show_data_overlay(data2d, class_name, save_path) -> None:
+    node_size = 10
+    data = data2d
     num = np.unique(class_name)
     fig, ax = plt.subplots(figsize=(12, 10), dpi=400)
 
@@ -187,22 +223,11 @@ def show_reduce_data_overlay(reduce_data: ReduceData, save_path, label) -> None:
     ax.set_xlabel("")
 
     # plt.savefig(f"{label}-overlay.png", bbox_inches="tight", dpi=400)
-    plt.savefig(f"{save_path}-{label}-overlay.png", bbox_inches="tight", dpi=400)
+    plt.savefig(f"{save_path}-overlay.png", bbox_inches="tight", dpi=400)
 
 
-def show_reduce_data_separate(reduce_data: ReduceData, save_path, label) -> None:
+def show_data_separate(data2d, class_name, save_path) -> None:
     node = 10
-    data2d = reduce_data.data2d
-    match label:
-        case "class":
-            class_name = reduce_data.classes
-        case "subclass":
-            class_name = reduce_data.classes
-            sub_class_name = reduce_data.subclasses
-            # class_name-sub_class_name
-            class_name = np.array(
-                [f"{class_name[i]}-{sub_class_name[i]}" for i in range(len(class_name))]
-            )
 
     class_name_set = np.unique(class_name)
 
@@ -271,8 +296,4 @@ def show_reduce_data_separate(reduce_data: ReduceData, save_path, label) -> None
                 ax.axis("off")
     plt.subplots_adjust(wspace=0.1, hspace=0.1)
     # plt.tight_layout()
-    plt.savefig(f"{save_path}-{label}-separate.png", bbox_inches="tight", dpi=400)
-
-
-def show_cluster_data(data: ClusterData) -> None:
-    raise NotImplementedError("Show_ClusterData method not implemented")
+    plt.savefig(f"{save_path}-separate.png", bbox_inches="tight", dpi=400)

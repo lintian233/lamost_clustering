@@ -21,8 +21,9 @@ class ClusterData:
     datand: NDArray[np.float64]
     classes: NDArray[np.str_]
     subclasses: NDArray[np.str_]
+    labels: NDArray[np.str_]
     obsid: NDArray[np.str_]
-    hyperparameters: dict[str, Any]
+    info: NDArray[np.str_] = None
 
     def __init__(
         self,
@@ -30,22 +31,31 @@ class ClusterData:
         datand: NDArray[np.float64],
         classes: NDArray[np.str_],
         subclasses: NDArray[np.str_],
+        labels: NDArray[np.str_],
         obsid: NDArray[np.str_],
-        hyperparameters: dict[str, Any],
+        info: NDArray[np.str_] = None,
     ):
         self.data2d = data2d
         self.datand = datand
         self.classes = classes
         self.subclasses = subclasses
+        self.labels = labels
         self.obsid = obsid
-        self.hyperparameters = hyperparameters
+        self.info = info
 
     @classmethod
     def from_numpy(
-        cls, data2d, datand, classes, subclasses, obsid, hyperparameters
+        cls,
+        data2d,
+        datand,
+        classes,
+        subclasses,
+        labels,
+        obsid,
+        info=None,
     ) -> "ClusterData":
         """
         从numpy数组中创建ReduceData对象
         """
 
-        return cls(data2d, datand, classes, subclasses, obsid, hyperparameters)
+        return cls(data2d, datand, classes, subclasses, labels, obsid, info)

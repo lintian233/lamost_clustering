@@ -1,34 +1,32 @@
+import hdbscan
 import numpy as np
-from numpy.typing import NDArray
+from typing import Any
 import os
-from sklearn.cluster import SpectralClustering
+
+from .ClusterData import ClusterData
+from .Cluster import Cluster
 
 from reducer.ReduceData import ReduceData
-from reducer.ReduceManager import ReduceManager
-from .Cluster import Cluster
-from .ClusterData import ClusterData
-
 from reducer.util import get_save_name
 
-from typing import Any
 
+class HDBSCANCluster(Cluster):
 
-class SpectralCluster(Cluster):
-    def __init__(self, n_clusters: int, assign_labels: str, **args) -> None:
+    def __init__(self, min_cluster_size: int, min_samples: int, **args) -> None:
         super().__init__()
         self.hyperparameters = {
-            "n_clusters": n_clusters,
-            "assign_labels": assign_labels,
+            "min_cluster_size": min_cluster_size,
+            "min_samples": min_samples,
             **args,
         }
-        self.cluster = SpectralClustering(
-            n_jobs=-1,
+        self.cluster = hdbscan.HDBSCAN(
+            core_dist_n_jobs=-1,
             **self.hyperparameters,
         )
 
-    def fit(self, reduce_data: ReduceData) -> str:
+    def fit(self, reduce_data: ReduceData) -> ClusterData:
 
-        save_name = get_save_name("Spectral", self.hyperparameters)
+        save_name = get_save_name("HDBSCAN", self.hyperparameters)
 
         save_path = self.cluster_dir + reduce_data.info[0] + "/" + save_name + ".npy"
 
@@ -42,7 +40,7 @@ class SpectralCluster(Cluster):
         classes = reduce_data.classes
         subclasses = reduce_data.subclasses
         obsid = reduce_data.obsid
-        labels = self.cluster.fit_predict(datand)
+        labels = self.cluster.fit(datand).labels_
         info = np.array([reduce_data.info[0], save_name], dtype=object)
 
         result_numpy = np.zeros(7, dtype=object)

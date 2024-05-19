@@ -34,9 +34,9 @@ class PCAReducer(Reducer):
                 self.result_dir + dataset_index + "/" + save_name + ".npy",
                 allow_pickle=True,
             )
-            ReduceData.from_numpy(*result)
-
-            return ReduceData  # FIX
+            reduce_data = ReduceData.from_numpy(*result)
+            reduce_data.info = [dataset_index, save_name]
+            return reduce_data
 
         data, classes, subclasses, obsid = get_data_from_dataset_index(dataset_index)
 
