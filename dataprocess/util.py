@@ -387,16 +387,6 @@ def to_std_spectral_data(spec_data: SpectralData) -> StdSpectraData:
 
 
 def get_useful(ormask: NDArray) -> bool:
-    num_spectra = len(ormask)
-    num_bits = 29
-
-    mask_table = np.zeros((num_spectra, num_bits), dtype=int)
-
-    for i, ormask in enumerate(ormask):
-        for bit in range(num_bits):
-            if (ormask & (1 << bit)) != 0:
-                mask_table[i, bit] = 1
-
     """
     0: "NOPLUG: 光纤未在插入图文件中列出",
     1: "BADTRACE: TRACE320CRUDE例程中轨迹不良",
@@ -425,12 +415,14 @@ def get_useful(ormask: NDArray) -> bool:
     27: "BADSKYCHI: 该波长处天空残差的相对χ² > 3",
     28: "REDMONSTER: 天空残差中的连续区域有坏的χ²（相对χ² > 3的阈值）"
     """
-    # important_bits = [1, 2, 3, 4, 6, 7, 16, 20, 21, 23]
-    # important_bits = [2, 3, 4, 5, 18, 23, 27, 28]
+    num_bits = 29
     important_bits = [2, 4, 5]
 
-    for bit in important_bits:
-        if sum(mask_table[:, bit]) > 0:
-            return False
+    # 将ormask扩展为3800x28的矩阵
+    mask_table = ((ormask[:, None] & (1 << np.arange(num_bits))) > 0).astype(int)
+
+    # 检查是否存在重要位
+    if np.any(np.sum(mask_table[:, important_bits], axis=0) > 0):
+        return False
 
     return True

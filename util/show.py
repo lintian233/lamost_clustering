@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
+
 from astropy.io.fits.header import Header
 from astropy.io.fits.fitsrec import FITS_rec
 
@@ -112,6 +113,9 @@ def show_reduce_data(reduce_data: ReduceData, mode="overlay", label="class") -> 
             show_reduce_data_separate(reduce_data, label)
 
 
+from matplotlib.colors import ListedColormap, BoundaryNorm
+
+
 def show_reduce_data_overlay(reduce_data: ReduceData, label) -> None:
     node_size = 10
     data = reduce_data.data2d
@@ -128,18 +132,28 @@ def show_reduce_data_overlay(reduce_data: ReduceData, label) -> None:
 
     num = np.unique(class_name)
     fig, ax = plt.subplots(figsize=(12, 10), dpi=400)
-    # fig.patch.set_facecolor("black")
-    # ax.set_facecolor("black")
 
-    squares = []
-    for i in range(len(num)):
-        index = np.where(class_name == num[i])
-        colors = COLORS[i % len(COLORS)]
-        ax.scatter(
-            data[index, 0], data[index, 1], s=node_size, label=num[i], color=colors
+    # 创建离散的颜色映射
+    num_colors = len(num)
+    cmap = ListedColormap(COLORS[:num_colors])
+    norm = BoundaryNorm(range(num_colors + 1), cmap.N)
+
+    for i, class_label in enumerate(num):
+        index = np.where(class_name == class_label)
+        colors = cmap(norm([i]))
+        scatter = ax.scatter(
+            data[index, 0], data[index, 1], s=node_size, label=class_label, color=colors
         )
 
-    ax.legend(handles=squares, labels=num)
+    # 添加颜色条，并设置刻度
+    cbar = plt.colorbar(
+        plt.cm.ScalarMappable(norm=norm, cmap=cmap),
+        ax=ax,
+        boundaries=np.arange(num_colors + 1),
+    )
+    cbar.set_ticks(np.arange(num_colors))
+    cbar.set_ticklabels(num)
+
     sns.despine(left=True, right=True, top=True, bottom=True)
     ax.set_xticks([])
     ax.set_yticks([])
@@ -147,7 +161,6 @@ def show_reduce_data_overlay(reduce_data: ReduceData, label) -> None:
     ax.set_xlabel("")
 
     plt.savefig(f"{label}-overlay.png", bbox_inches="tight", dpi=400)
-    # plt.show()
 
 
 def show_reduce_data_separate(reduce_data: ReduceData, label) -> None:

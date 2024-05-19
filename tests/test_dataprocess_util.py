@@ -1,6 +1,7 @@
 import os
 import unittest
 import glob
+import timeit
 
 import numpy as np
 
@@ -40,4 +41,11 @@ class TestDataprocessutil(unittest.TestCase):
     def test_get_useful(self):
         sdss_dataset = DataProcess.load_dataset("SDSSDataset-000")
         result = get_useful(sdss_dataset.dataset[0].ORMASK)
-        pass
+
+        # timeit.timeit(lambda: get_useful(sdss_dataset.dataset[0].ORMASK), number=1000)
+        print(
+            "get_useful time: ",
+            timeit.timeit(
+                lambda: get_useful(sdss_dataset.dataset[0].ORMASK), number=100
+            ),
+        )

@@ -22,10 +22,9 @@ class TestUtil(unittest.TestCase):
         pass
 
     def test_show_spectraldata(self):
-        dataset = DataProcess.load_dataset("LamostDataset-000")
-
-        data = dataset[0]
-        show_spectraldata(data)
+        dataset = DataProcess.load_dataset("StdDataset-007")
+        for i in dataset:
+            show_spectraldata(i)
 
         self.assertTrue(True)
 
@@ -42,6 +41,6 @@ class TestUtil(unittest.TestCase):
         # reducer.reduce("SDSSDataset-002")
 
         ReduceManager.info_result()
-        data = ReduceManager.get_result(3)
+        data = ReduceManager.get_result(4)
         # separate
-        show_reduce_data(data, mode="separate", label="subclass")
+        show_reduce_data(data, mode="overlay", label="subclass")

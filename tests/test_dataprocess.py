@@ -97,7 +97,7 @@ class TestDataProcess(unittest.TestCase):
     def test_sdss_preprocess(self):
         raw_sdss = DataProcess.load_dataset("SDSSDataset-000")
         DataProcess.preprocessing("SDSSDataset-000")
-        pre_sdss = DataProcess.load_dataset("StdDataset-000")
+        pre_sdss = DataProcess.load_dataset("StdDataset-007")
 
         dataset = []
         for i in pre_sdss.dataset:
