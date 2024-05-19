@@ -131,10 +131,10 @@ def show_data(data) -> None:
 
     elif isinstance(data, ClusterData):
         info = data.info
-        save_dir = f"{VISUALIZATION_CLUSTER_PATH}/{info[0]}/"
+        save_dir = f"{VISUALIZATION_CLUSTER_PATH}/{info[0]}/{info[1]}/"
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
-        save_path = f"{save_dir}{info[1]}"
+        save_path = f"{save_dir}{info[2]}"
         set_loky_pickler("dill")
         mode = ["overlay", "separate"]
         Parallel(n_jobs=2)(

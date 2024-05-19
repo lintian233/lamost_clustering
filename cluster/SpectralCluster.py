@@ -29,8 +29,9 @@ class SpectralCluster(Cluster):
     def fit(self, reduce_data: ReduceData) -> str:
 
         save_name = get_save_name("Spectral", self.hyperparameters)
-
-        save_path = self.cluster_dir + reduce_data.info[0] + "/" + save_name + ".npy"
+        dataset_index = reduce_data.info[0]
+        reduce_info = reduce_data.info[1]
+        save_path = f"{self.cluster_dir}{dataset_index}/{reduce_info}/{save_name}.npy"
 
         if os.path.exists(save_path):
             cluster_np = np.load(save_path, allow_pickle=True)
@@ -43,7 +44,9 @@ class SpectralCluster(Cluster):
         subclasses = reduce_data.subclasses
         obsid = reduce_data.obsid
         labels = self.cluster.fit_predict(datand)
-        info = np.array([reduce_data.info[0], save_name], dtype=object)
+        info = np.array(
+            [reduce_data.info[0], reduce_data.info[1], save_name], dtype=object
+        )
 
         result_numpy = np.zeros(7, dtype=object)
         result_numpy[0] = data2d
@@ -55,10 +58,11 @@ class SpectralCluster(Cluster):
         result_numpy[6] = info
 
         result = ClusterData(data2d, datand, classes, subclasses, labels, obsid, info)
-        dataset_index = reduce_data.info[0]
 
-        if not os.path.exists(self.cluster_dir + dataset_index):
-            os.makedirs(self.cluster_dir + dataset_index)
+        save_dir = f"{self.cluster_dir}{dataset_index}/{reduce_info}/"
+
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
 
         np.save(save_path, result_numpy, allow_pickle=True)
 
