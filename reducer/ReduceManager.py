@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-
+from typing import Tuple
 
 from reducer.ReduceData import ReduceData
 from reducer.util import get_reduce_data
@@ -87,7 +87,7 @@ class ReduceManager:
         return combined_df
 
     @staticmethod
-    def get_result(index) -> ReduceData:
+    def get_result(index) -> Tuple[ReduceData, str]:
         """
         根据索引获取降维结果
         返回对应降维结果的ReduceData对象
@@ -104,7 +104,7 @@ class ReduceManager:
                 ):
                     all_result.append([i, result_dir + dir + "/" + file])
                     i += 1
-
         for item in all_result:
             if item[0] == index:
-                return get_reduce_data(item[1])
+                file_name = item[1].split("/")[-1].split(".")[0]
+                return get_reduce_data(item[1]), file_name

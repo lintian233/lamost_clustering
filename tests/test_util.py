@@ -41,6 +41,6 @@ class TestUtil(unittest.TestCase):
         # reducer.reduce("SDSSDataset-002")
 
         ReduceManager.info_result()
-        data = ReduceManager.get_result(4)
+        data, filename = ReduceManager.get_result(4)
         # separate
         show_reduce_data(data, mode="overlay", label="subclass")

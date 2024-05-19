@@ -7,7 +7,6 @@ import seaborn as sns
 from astropy.io.fits.header import Header
 from astropy.io.fits.fitsrec import FITS_rec
 
-
 from dataprocess import SpectralData
 from dataprocess.SpectralData import LamostSpectraData, SDSSSpectraData, StdSpectraData
 from reducer import ReduceData
