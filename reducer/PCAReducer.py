@@ -7,10 +7,12 @@ from numpy.typing import NDArray
 
 from .Reducer import Reducer
 import dataprocess.DataProcess as dp
-from .util import get_data_from_dataset_index
+from .util import get_data_from_dataset_index, get_data_from_dataset
 from .util import get_data2d
 from .util import get_save_name
 from reducer.ReduceData import ReduceData
+from dataprocess.Dataset import Dataset
+from dataprocess.LoadedDatasetManager import LoadedDatasetManager
 
 
 class PCAReducer(Reducer):
@@ -19,7 +21,7 @@ class PCAReducer(Reducer):
         self.dimension = dimension
         self.reducer = PCA
 
-    def reduce(self, dataset_index: str) -> ReduceData:
+    def reduce(self, dataset: Dataset) -> ReduceData:
         """
         实现PCA降维
         将降维结果保存在result_dir中
@@ -27,6 +29,12 @@ class PCAReducer(Reducer):
         """
 
         save_name = get_save_name("PCA", {"n_components": self.dimension})
+
+        ldm = LoadedDatasetManager.instance()
+        dataset_index = ldm.get_index(dataset)
+
+        if not dataset_index.startswith("StdDataset"):
+            raise ValueError("Not a StdDataset.")
 
         if os.path.exists(self.result_dir + dataset_index + "/" + save_name + ".npy"):
 
@@ -38,11 +46,11 @@ class PCAReducer(Reducer):
             reduce_data.info = [dataset_index, save_name]
             return reduce_data
 
-        data, classes, subclasses, obsid = get_data_from_dataset_index(dataset_index)
+        data, classes, subclasses, obsid = get_data_from_dataset(dataset)
 
         reduce_data = self.reducer(n_components=self.dimension).fit_transform(data)
 
-        data2d = get_data2d(dataset_index)
+        data2d = get_data2d(dataset)
 
         result = np.zeros(5, dtype=object)
         result[0] = data2d

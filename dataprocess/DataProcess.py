@@ -200,11 +200,10 @@ class DataProcess:
         return INFO
 
     @staticmethod
-    def preprocessing(dataset_index: str) -> str:
+    def preprocessing(raw_dataset: Dataset) -> str:
         """
         数据预处理
         """
-        raw_dataset = DataProcess.load_dataset(dataset_index)
 
         # with ThreadPoolExecutor() as executor:
         #     std_results = executor.map(to_std_spectral_data, raw_dataset.dataset)
@@ -239,4 +238,8 @@ class DataProcess:
                     hdulist.append(hdu)
             hdulist.writeto(save_path, overwrite=True, output_verify="ignore")
 
-        return save_path
+        ldm = LoadedDatasetManager.instance()
+        dataset_index = '-'.join(dataset_name.split("-")[0:2])
+        ldm.add(dataset_index, std_dataset)
+
+        return std_dataset

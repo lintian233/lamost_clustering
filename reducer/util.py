@@ -8,6 +8,9 @@ import dataprocess.DataProcess as dp
 from dataprocess.SpectralData import SpectralData
 from config.config import REDUCEDATAPATH
 from reducer.ReduceData import ReduceData
+from dataprocess.Dataset import Dataset
+from dataprocess.LoadedDatasetManager import LoadedDatasetManager
+
 from joblib import Parallel, delayed
 from joblib.externals.loky import set_loky_pickler
 from tqdm import tqdm
@@ -29,14 +32,43 @@ def get_data_from_dataset_index(dataset_index: str) -> tuple:
         )
     """
     dataset = dp.load_dataset(dataset_index)
-    data = np.zeros((len(dataset), 3000))
+    data = np.zeros((len(dataset), 3700))
     classes = np.full(len(dataset), "0", dtype="U15")
     subclasses = np.full(len(dataset), "0", dtype="U15")
     obsid = np.full(len(dataset), "0", dtype="U15")
 
     for i, spectral_data in enumerate(tqdm(dataset)):
-        wave = spectral_data.WAVELENGTH[:3000]
-        data[i] = spectral_data.FLUX[:3000]
+        wave = spectral_data.WAVELENGTH
+        data[i] = spectral_data.FLUX
+        classes[i] = spectral_data.CLASS
+        subclasses[i] = spectral_data.SUBCLASS
+        obsid[i] = spectral_data.OBSID
+
+    return data, classes, subclasses, obsid
+
+
+def get_data_from_dataset(dataset: Dataset) -> tuple:
+    """
+    获取数据集参数
+
+    参数：
+    dataset_index: str, 数据集索引
+
+    返回：
+    tuple: (
+        data: 流量数据
+        classes: 类别
+        subclasses: 子类别
+        obsid: 观测ID
+        )
+    """
+    data = np.zeros((len(dataset), 3700))
+    classes = np.full(len(dataset), "0", dtype="U15")
+    subclasses = np.full(len(dataset), "0", dtype="U15")
+    obsid = np.full(len(dataset), "0", dtype="U15")
+
+    for i, spectral_data in enumerate(tqdm(dataset)):
+        data[i] = spectral_data.FLUX
         classes[i] = spectral_data.CLASS
         subclasses[i] = spectral_data.SUBCLASS
         obsid[i] = spectral_data.OBSID
@@ -62,7 +94,7 @@ def if_reduced(dataset_index: str):
         return False
 
 
-def get_data2d(dataset_index: str):
+def get_data2d(dataset: Dataset):
     """
     根据数据集索引获取数据集的二维数据
 
@@ -72,7 +104,8 @@ def get_data2d(dataset_index: str):
     返回：
     np.ndarray: 二维数据
     """
-
+    ldm = LoadedDatasetManager.instance()
+    dataset_index = ldm.get_index(dataset)
     if not if_reduced(dataset_index):
         reducer = umap.UMAP(
             n_components=2,

@@ -22,3 +22,10 @@ class LoadedDatasetManager:
         if dataset_index not in self.cache:
             return None
         return self.cache[dataset_index]
+
+    def get_index(self, dataset: Dataset) -> str:
+        for index, data in self.cache.items():
+            if data == dataset:
+                return index
+        raise ValueError("Dataset not found in cache")
+    

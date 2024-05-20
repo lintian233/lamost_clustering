@@ -4,6 +4,7 @@ import time
 import numpy as np
 
 from reducer.UMAPReducer import UMAPReducer
+from dataprocess.DataProcess import DataProcess
 
 
 class TestUMAPReducer(unittest.TestCase):
@@ -18,7 +19,9 @@ class TestUMAPReducer(unittest.TestCase):
             learning_rate=1.0,
             min_dist=0.1,
         )
-        reducer.reduce("SDSSDataset-002")
+        dataset = DataProcess.load_dataset("LamostDataset-008")
+        dataset = DataProcess.preprocessing(dataset)
+        result = reducer.reduce(dataset)
         pass
 
     @unittest.skip("Time-consuming test")
