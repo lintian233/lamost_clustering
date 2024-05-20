@@ -15,18 +15,13 @@ from dataprocess.LoadedDatasetManager import LoadedDatasetManager
 
 class TSNEReducer(Reducer):
     def __init__(
-        self, dimension: int, perplexity: int, learning_rate: int, n_iter: int
+        self, dimension: int, **args
     ) -> None:
         super().__init__()
         self.dimension = dimension
-        self.hyperparameters = {
-            "perplexity": perplexity,
-            "learning_rate": learning_rate,
-            "n_iter": n_iter,
-        }
+        self.hyperparameters = {**args}
         self.reducer = TSNE(
             n_components=dimension,
-            n_jobs=-1,
             **self.hyperparameters,
         )
 
@@ -39,12 +34,7 @@ class TSNEReducer(Reducer):
 
         save_name = get_save_name(
             "TSNE",
-            {
-                "n_components": self.dimension,
-                "perplexity": self.hyperparameters["perplexity"],
-                "learning_rate": self.hyperparameters["learning_rate"],
-                "n_iter": self.hyperparameters["n_iter"],
-            },
+            {"n_components": self.dimension, **self.hyperparameters},
         )
 
         ldm = LoadedDatasetManager.instance()

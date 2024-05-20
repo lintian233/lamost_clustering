@@ -11,7 +11,7 @@ class TestTSNEReducer(unittest.TestCase):
         pass
 
     def test_tsne_reduce(self):
-        reducer = TSNEReducer(dimension=2, perplexity=30, learning_rate=200, n_iter=250)
+        reducer = TSNEReducer(dimension=2, perplexity=30)
         dataset = DataProcess.load_dataset("LamostDataset-008")
         dataset = DataProcess.preprocessing(dataset)
         result = reducer.reduce(dataset)

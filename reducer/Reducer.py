@@ -8,6 +8,7 @@ import numpy as np
 from config.config import REDUCEDATAPATH
 from reducer.ReduceData import ReduceData
 from .util import get_reduce_data
+from dataprocess.Dataset import Dataset
 
 
 """
@@ -29,12 +30,11 @@ class Reducer(ABC):
         self.all_result = ""
 
     @abstractmethod
-    def reduce(self, dataset_index: str) -> ReduceData:
+    def reduce(self, dataset: Dataset) -> ReduceData:
         """
         根据数据集的索引进行降维
         将降维结果保存在result_dir中
         返回ReduceData对象
         此方法需要在子类中实现
         """
-
         pass

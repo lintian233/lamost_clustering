@@ -16,10 +16,11 @@ from dataprocess.LoadedDatasetManager import LoadedDatasetManager
 
 
 class PCAReducer(Reducer):
-    def __init__(self, dimension: int) -> None:
+    def __init__(self, dimension: int, **args) -> None:
         super().__init__()
         self.dimension = dimension
         self.reducer = PCA
+        self.hyperparameters = {**args}
 
     def reduce(self, dataset: Dataset) -> ReduceData:
         """
@@ -28,7 +29,8 @@ class PCAReducer(Reducer):
         返回ReduceData对象
         """
 
-        save_name = get_save_name("PCA", {"n_components": self.dimension})
+        save_name = get_save_name("PCA", 
+            {"n_components": self.dimension, **self.hyperparameters})
 
         ldm = LoadedDatasetManager.instance()
         dataset_index = ldm.get_index(dataset)
@@ -48,7 +50,8 @@ class PCAReducer(Reducer):
 
         data, classes, subclasses, obsid = get_data_from_dataset(dataset)
 
-        reduce_data = self.reducer(n_components=self.dimension).fit_transform(data)
+        reduce_data = self.reducer(n_components=self.dimension, **self.hyperparameters
+                                   ).fit_transform(data)
 
         data2d = get_data2d(dataset)
 

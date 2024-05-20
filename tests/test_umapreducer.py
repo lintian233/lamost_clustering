@@ -14,9 +14,7 @@ class TestUMAPReducer(unittest.TestCase):
     def test_umap_reduce(self):
         reducer = UMAPReducer(
             dimension=20,
-            n_neighbors=5,
             metric="euclidean",
-            learning_rate=1.0,
             min_dist=0.1,
         )
         dataset = DataProcess.load_dataset("LamostDataset-008")
