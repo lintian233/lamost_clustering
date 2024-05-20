@@ -28,4 +28,3 @@ class LoadedDatasetManager:
             if data == dataset:
                 return index
         raise ValueError("Dataset not found in cache")
-    

@@ -239,7 +239,7 @@ class DataProcess:
             hdulist.writeto(save_path, overwrite=True, output_verify="ignore")
 
         ldm = LoadedDatasetManager.instance()
-        dataset_index = '-'.join(dataset_name.split("-")[0:2])
+        dataset_index = "-".join(dataset_name.split("-")[0:2])
         ldm.add(dataset_index, std_dataset)
 
         return std_dataset

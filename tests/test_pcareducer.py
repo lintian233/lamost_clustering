@@ -6,7 +6,6 @@ from reducer.PCAReducer import PCAReducer
 from dataprocess.DataProcess import DataProcess
 
 
-
 class TestPCAReducer(unittest.TestCase):
     def setUp(self) -> None:
         pass
