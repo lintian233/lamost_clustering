@@ -388,6 +388,7 @@ def to_std_spectral_data(spec_data: SpectralData) -> StdSpectraData:
 
 def get_useful(ormask: NDArray) -> bool:
     """
+    Details: https://www.sdss4.org/dr17/algorithms/bitmasks/
     0: "NOPLUG: 光纤未在插入图文件中列出",
     1: "BADTRACE: TRACE320CRUDE例程中轨迹不良",
     2: "BADFLAT: 平场测量中的计数低",
