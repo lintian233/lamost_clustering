@@ -11,12 +11,11 @@ from .util import get_data2d
 from reducer.ReduceData import ReduceData
 from dataprocess.Dataset import Dataset
 from dataprocess.LoadedDatasetManager import LoadedDatasetManager
+from dataprocess.util import print_bule, print_red, print_green
 
 
 class TSNEReducer(Reducer):
-    def __init__(
-        self, dimension: int, **args
-    ) -> None:
+    def __init__(self, dimension: int, **args) -> None:
         super().__init__()
         self.dimension = dimension
         self.hyperparameters = {**args}
@@ -36,14 +35,10 @@ class TSNEReducer(Reducer):
             "TSNE",
             {"n_components": self.dimension, **self.hyperparameters},
         )
-
-        ldm = LoadedDatasetManager.instance()
-        dataset_index = ldm.get_index(dataset)
-
-        if not dataset_index.startswith("StdDataset"):
-            raise ValueError("Not a StdDataset.")
+        dataset_index = dataset.name.split("-")[0] + "-" + dataset.name.split("-")[1]
 
         if os.path.exists(self.result_dir + dataset_index + "/" + save_name + ".npy"):
+            print_green("TSNE result exists.Load from cache.")
 
             result = np.load(
                 self.result_dir + dataset_index + "/" + save_name + ".npy",
@@ -55,8 +50,9 @@ class TSNEReducer(Reducer):
 
         data, classes, subclasses, obsid = get_data_from_dataset(dataset)
 
+        print_bule("TSNE reduce datand")
         reduce_data = self.reducer.fit(data)
-
+        print_bule("TSNE reduce data2d")
         data2d = get_data2d(dataset)
 
         result = np.zeros(5, dtype=object)
@@ -73,5 +69,5 @@ class TSNEReducer(Reducer):
 
         result = ReduceData.from_numpy(*result)
         result.info = [dataset_index, save_name]
-
+        print_green("TSNE reduce done.")
         return result

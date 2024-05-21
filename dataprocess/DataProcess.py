@@ -22,6 +22,7 @@ from .LoadedDatasetManager import LoadedDatasetManager
 from .util import find_dataset_path, generate_dataset_name
 from .util import init_lamost_dataset, init_sdss_dataset, init_std_dataset
 from .util import to_std_spectral_data
+from .util import print_bule, print_red, print_green
 
 """
 /Data/ 
@@ -124,7 +125,7 @@ class DataProcess:
         ldm = LoadedDatasetManager.instance()
         loaded_dataset = ldm.get(dataset_index)
         if loaded_dataset is not None:
-            print(f"Loaded {dataset_index} from memory")
+            print_green(f"Dataset {dataset_index} loaded from cache.")
             return loaded_dataset
 
         telescope = dataset_index.split("-")[0]
@@ -144,6 +145,7 @@ class DataProcess:
 
         hdulist = fits.open(dataset_path, memmap=True, lazy_load_hdus=True)
 
+        print_bule(f"Loading {dataset_index}")
         match telescope:
             case "LamostDataset":
                 spectrum_data = init_lamost_dataset(hdulist, num_spectra)
@@ -153,10 +155,11 @@ class DataProcess:
                 spectrum_data = init_std_dataset(hdulist, num_spectra)
 
         dataset.dataset = spectrum_data
-        dataset.name = dataset_path.split("\\")[-1].split(".")[0]
+        dataset.name = dataset_path.split(r"\\")[-1].split(".")[0]
 
         ldm.add(dataset_index, dataset)
 
+        print_green(f"Dataset {dataset_index} loaded.")
         return dataset
 
     @staticmethod
@@ -230,6 +233,7 @@ class DataProcess:
         dataset_name = generate_dataset_name(
             std_dataset.__class__.__name__, std_dataset.dir_base_path, labels_list
         )
+        std_dataset.name = dataset_name
         save_path = std_dataset.dir_base_path + dataset_name + ".fits"
 
         with fits.HDUList() as hdulist:

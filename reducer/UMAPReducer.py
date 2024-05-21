@@ -12,13 +12,15 @@ from .util import get_data2d
 from .ReduceData import ReduceData
 from dataprocess.Dataset import Dataset
 from dataprocess.LoadedDatasetManager import LoadedDatasetManager
+from dataprocess.util import print_bule, print_red, print_green
 
 
 class UMAPReducer(Reducer):
     def __init__(
         self,
         dimension: int,
-        **args,) -> None:
+        **args,
+    ) -> None:
         super().__init__()
         self.dimension = dimension
         self.reducer = umap.UMAP
@@ -32,17 +34,13 @@ class UMAPReducer(Reducer):
         """
 
         save_name = get_save_name(
-            "UMAP",{"n_components": self.dimension, **self.hyperparameters},
+            "UMAP",
+            {"n_components": self.dimension, **self.hyperparameters},
         )
-
-        ldm = LoadedDatasetManager.instance()
-        dataset_index = ldm.get_index(dataset)
-
-        if not dataset_index.startswith("StdDataset"):
-            raise ValueError("Not a StdDataset.")
+        dataset_index = dataset.name.split("-")[0] + "-" + dataset.name.split("-")[1]
 
         if os.path.exists(self.result_dir + dataset_index + "/" + save_name + ".npy"):
-
+            print_green("UMAP result exists.Load from cache.")
             result = np.load(
                 self.result_dir + dataset_index + "/" + save_name + ".npy",
                 allow_pickle=True,
@@ -53,11 +51,11 @@ class UMAPReducer(Reducer):
 
         data, classes, subclasses, obsid = get_data_from_dataset(dataset)
 
+        print_bule("UMAP reduce datand")
         reduce_data = self.reducer(
-            n_components=self.dimension,
-            **self.hyperparameters
+            n_components=self.dimension, **self.hyperparameters
         ).fit_transform(data)
-
+        print_bule("UMAP reduce data2d")
         data2d = get_data2d(dataset)
 
         result = np.zeros(5, dtype=object)
@@ -74,4 +72,5 @@ class UMAPReducer(Reducer):
 
         result = ReduceData.from_numpy(*result)
         result.info = [dataset_index, save_name]
+        print_green("UMAP reduce done.")
         return result

@@ -4,6 +4,7 @@ from typing import Any
 from sklearn.decomposition import PCA
 import numpy as np
 from numpy.typing import NDArray
+from tqdm import tqdm
 
 from .Reducer import Reducer
 import dataprocess.DataProcess as dp
@@ -13,6 +14,7 @@ from .util import get_save_name
 from reducer.ReduceData import ReduceData
 from dataprocess.Dataset import Dataset
 from dataprocess.LoadedDatasetManager import LoadedDatasetManager
+from dataprocess.util import print_bule, print_red, print_green
 
 
 class PCAReducer(Reducer):
@@ -29,17 +31,15 @@ class PCAReducer(Reducer):
         返回ReduceData对象
         """
 
-        save_name = get_save_name("PCA", 
-            {"n_components": self.dimension, **self.hyperparameters})
+        save_name = get_save_name(
+            "PCA", {"n_components": self.dimension, **self.hyperparameters}
+        )
 
-        ldm = LoadedDatasetManager.instance()
-        dataset_index = ldm.get_index(dataset)
-
-        if not dataset_index.startswith("StdDataset"):
-            raise ValueError("Not a StdDataset.")
+        dataset_nl = dataset.name.split("-")
+        dataset_index = dataset_nl[0] + "-" + dataset_nl[1]
 
         if os.path.exists(self.result_dir + dataset_index + "/" + save_name + ".npy"):
-
+            print_green("PCA result exists.Load from cache.")
             result = np.load(
                 self.result_dir + dataset_index + "/" + save_name + ".npy",
                 allow_pickle=True,
@@ -50,9 +50,12 @@ class PCAReducer(Reducer):
 
         data, classes, subclasses, obsid = get_data_from_dataset(dataset)
 
-        reduce_data = self.reducer(n_components=self.dimension, **self.hyperparameters
-                                   ).fit_transform(data)
+        print_bule("PCA reduce datand")
+        reduce_data = self.reducer(
+            n_components=self.dimension, **self.hyperparameters
+        ).fit_transform(data)
 
+        print_bule("PCA reduce data2d")
         data2d = get_data2d(dataset)
 
         result = np.zeros(5, dtype=object)
@@ -70,4 +73,5 @@ class PCAReducer(Reducer):
         result = ReduceData.from_numpy(*result)
         result.info = [dataset_index, save_name]
 
+        print_green(f"PCA reduce {dataset_index} finished.")
         return result

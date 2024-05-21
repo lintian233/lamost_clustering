@@ -427,3 +427,19 @@ def get_useful(ormask: NDArray) -> bool:
         return False
 
     return True
+
+
+def print_red(text, *args, **kwargs):
+    # 加粗
+    # print(f"\033[31m{text}\033[0m", *args, **kwargs)
+    print(f"\033[1;31m{text}\033[0m", *args, **kwargs)
+
+
+def print_green(text, *args, **kwargs):
+    # 加粗
+    print(f"\033[1;32m{text}\033[0m", *args, **kwargs)
+
+
+def print_bule(text, *args, **kwargs):
+    # 加粗
+    print(f"\033[1;34m{text}\033[0m", *args, **kwargs)

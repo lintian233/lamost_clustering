@@ -10,6 +10,7 @@ from config.config import REDUCEDATAPATH
 from reducer.ReduceData import ReduceData
 from dataprocess.Dataset import Dataset
 from dataprocess.LoadedDatasetManager import LoadedDatasetManager
+from dataprocess.util import print_bule, print_red, print_green
 
 from joblib import Parallel, delayed
 from joblib.externals.loky import set_loky_pickler
@@ -62,13 +63,24 @@ def get_data_from_dataset(dataset: Dataset) -> tuple:
         obsid: 观测ID
         )
     """
+    if dataset.name.split("-")[0] != "StdDataset":
+        print_red("Warning: This is not a standard dataset. may some error occur.")
+
+    print_bule("Get useful data from dataset...")
+    try:
+        spectral_data = [item for item in tqdm(dataset) if item.USEFUL == True]
+        dataset = spectral_data
+    except AttributeError:
+        pass
+
     data = np.zeros((len(dataset), 3700))
     classes = np.full(len(dataset), "0", dtype="U15")
     subclasses = np.full(len(dataset), "0", dtype="U15")
     obsid = np.full(len(dataset), "0", dtype="U15")
 
+    print_bule("Get spetral data in dataset...")
     for i, spectral_data in enumerate(tqdm(dataset)):
-        data[i] = spectral_data.FLUX
+        data[i] = spectral_data.FLUX[:3700]
         classes[i] = spectral_data.CLASS
         subclasses[i] = spectral_data.SUBCLASS
         obsid[i] = spectral_data.OBSID
@@ -104,8 +116,7 @@ def get_data2d(dataset: Dataset):
     返回：
     np.ndarray: 二维数据
     """
-    ldm = LoadedDatasetManager.instance()
-    dataset_index = ldm.get_index(dataset)
+    dataset_index = LoadedDatasetManager.instance().get_index(dataset)
     if not if_reduced(dataset_index):
         reducer = umap.UMAP(
             n_components=2,

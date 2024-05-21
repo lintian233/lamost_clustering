@@ -84,7 +84,7 @@ class TestDataProcess(unittest.TestCase):
 
     def test_lamost_preprocess(self):
         raw_lamost = DataProcess.load_dataset("LamostDataset-000")
-        DataProcess.preprocessing("LamostDataset-000")
+        DataProcess.preprocessing(raw_lamost)
         pre_lamost = DataProcess.load_dataset("StdDataset-000")
 
         for i in range(len(raw_lamost.dataset)):
@@ -96,7 +96,7 @@ class TestDataProcess(unittest.TestCase):
 
     def test_sdss_preprocess(self):
         raw_sdss = DataProcess.load_dataset("SDSSDataset-000")
-        DataProcess.preprocessing("SDSSDataset-000")
+        DataProcess.preprocessing(raw_sdss)
         pre_sdss = DataProcess.load_dataset("StdDataset-007")
 
         dataset = []
