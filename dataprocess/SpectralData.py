@@ -119,10 +119,20 @@ class LamostSpectraData(SpectralData):
 
     @property
     def SUBCLASS(self) -> str:
-        if self._subclass_name is None:
-            self._subclass_name = self.header["SUBCLASS"]
-        return self._subclass_name
-
+        # if self._subclass_name is None:
+        #     self._subclass_name = self.header["SUBCLASS"]
+        # return self._subclass_name
+        if self._subclass_name is not None:
+            return self._subclass_name
+        
+        subclass = self.header["SUBCLASS"]
+        CLASSES = ["O", "B", "A", "F", "G", "K", "M", "Carbon"]
+        for c in CLASSES:
+            if c in subclass:
+                return c
+        
+        return "Unknown"
+    
     @property
     def CLASS(self) -> str:
         if self._class_name is None:
@@ -225,7 +235,13 @@ class StdSpectraData(SpectralData):
 
     @property
     def SUBCLASS(self) -> str:
-        return self.header["SUBCLASS"]
+        subclasses = ["O", "B", "A", "F", "G", "K", "M", "Carbon"]
+        for c in subclasses:
+            if c in self.header["SUBCLASS"]:
+                return c
+        
+        return "Unknown"
+        # return self.header["SUBCLASS"]
 
     @property
     def OBSID(self) -> str:

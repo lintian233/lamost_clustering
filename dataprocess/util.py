@@ -49,7 +49,9 @@ def check_dataset_index(dataset_index: str) -> bool:
     False
     """
     class_python_files = glob.glob("dataprocess/*Dataset.py")
-    patten = r"\\(\w+Dataset).py"
+    patten = r"(\w+Dataset)(?=\.py$)"
+
+
 
     class_names = []
     for class_python_file in class_python_files:

@@ -17,7 +17,7 @@ class TestUMAPReducer(unittest.TestCase):
             metric="euclidean",
             min_dist=0.1,
         )
-        dataset = DataProcess.load_dataset("LamostDataset-008")
+        dataset = DataProcess.load_dataset("LamostDataset-000")
         dataset = DataProcess.preprocessing(dataset)
         result = reducer.reduce(dataset)
         pass

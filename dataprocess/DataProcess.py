@@ -155,7 +155,7 @@ class DataProcess:
                 spectrum_data = init_std_dataset(hdulist, num_spectra)
 
         dataset.dataset = spectrum_data
-        dataset.name = dataset_path.split(r"\\")[-1].split(".")[0]
+        dataset.name = dataset_path.split(r"/")[-1].split(".")[0]
 
         ldm.add(dataset_index, dataset)
 
@@ -180,7 +180,7 @@ class DataProcess:
             current = glob.glob(item + "*.fits")
             dataset.append(current)
 
-        pattern = r"\\([A-Za-z]+-\d+)-SN(\d+)-STAR(\d+)-QSO(\d+)-GALAXY(\d+)"
+        pattern = r"/([A-Za-z]+-\d+)-SN(\d+)-STAR(\d+)-QSO(\d+)-GALAXY(\d+)"
 
         datasets_info = []
         for item in dataset:

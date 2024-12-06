@@ -13,7 +13,7 @@ class TestPCAReducer(unittest.TestCase):
         pass
 
     def test_pca_reduce(self):
-        dataset = DataProcess.load_dataset("LamostDataset-008")
+        dataset = DataProcess.load_dataset("LamostDataset-000")
         dataset = DataProcess.preprocessing(dataset)
         reducer = PCAReducer(dimension=50)
         result = reducer.reduce(dataset)

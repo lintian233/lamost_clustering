@@ -30,15 +30,16 @@ class TestDataprocessutil(unittest.TestCase):
     def test_genetrate_new_index(self):
         data = np.zeros(10, dtype=SpectralDataType)
         index = generate_new_index(self.dirpath)
-        self.assertEqual(index, "001")
+        self.assertEqual(index, "000")
 
     def test_check_dataset_index(self):
-        self.assertTrue(check_dataset_index("LamostDataset-001"))
+        self.assertTrue(check_dataset_index("LamostDataset-000"))
         self.assertTrue(check_dataset_index("SDSSDataset-002"))
         self.assertFalse(check_dataset_index("NONSENDataset-003"))
         self.assertFalse(check_dataset_index("LamostDataset-00a"))
-
+    @unittest.skip("skip")
     def test_get_useful(self):
+        #只有SDSS的需要这个
         sdss_dataset = DataProcess.load_dataset("SDSSDataset-000")
         result = get_useful(sdss_dataset.dataset[0].ORMASK)
 

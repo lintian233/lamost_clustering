@@ -10,6 +10,10 @@ from astropy.io.fits.fitsrec import FITS_rec
 from joblib import Parallel, delayed
 from joblib.externals.loky import set_loky_pickler
 from matplotlib.colors import ListedColormap, BoundaryNorm
+from sklearn.metrics import adjusted_rand_score, adjusted_mutual_info_score, rand_score
+from collections import defaultdict
+from sklearn.metrics import confusion_matrix
+from sklearn.preprocessing import LabelEncoder
 
 from dataprocess import SpectralData
 from dataprocess.SpectralData import LamostSpectraData, SDSSSpectraData, StdSpectraData
@@ -297,3 +301,133 @@ def show_data_separate(data2d, class_name, save_path) -> None:
     plt.subplots_adjust(wspace=0.1, hspace=0.1)
     # plt.tight_layout()
     plt.savefig(f"{save_path}-separate.png", bbox_inches="tight", dpi=400)
+
+def calculate_rand_index(y_true, y_pred):
+    """
+    通过真实标签和聚类标签自动统计分布并计算 Rand Index。
+    :param y_true: 真实标签的列表
+    :param y_pred: 聚类标签的列表
+    :return: Rand Index
+    """
+    # 确保真实标签和聚类标签长度相同
+    if len(y_true) != len(y_pred):
+        raise ValueError("真实标签和聚类标签的长度必须一致")
+
+    # 统计每个真实标签的聚类标签分布
+    cluster_distribution = defaultdict(list)
+    for true_label, cluster_label in zip(y_true, y_pred):
+        cluster_distribution[true_label].append(cluster_label)
+
+    # 构造扩展的真实标签和聚类标签
+    y_pred_expanded = []
+    y_true_expanded = []
+    for label, clusters in cluster_distribution.items():
+        y_pred_expanded.extend(clusters)
+        y_true_expanded.extend([label] * len(clusters))
+
+    # 计算 Rand Index
+    return rand_score(y_true_expanded, y_pred_expanded)
+
+
+def print_weighted_purity_by_class(cluster_details):
+    """
+    计算并打印每个主要类别的加权纯度。
+
+    参数:
+    - cluster_details: dict, 每个聚类簇的详细信息。
+    """
+    # 计算每个主要类别的加权纯度
+    class_purity_weights = {}
+
+    for cluster, details in cluster_details.items():
+        major_class = details["Major Class"]
+        purity = details["Purity"]
+        weight = details["Weight"]
+        
+        # 加入或更新主要类别的加权纯度累积
+        if major_class not in class_purity_weights:
+            class_purity_weights[major_class] = {
+                "Weighted Sum": 0,
+                "Total Weight": 0
+            }
+        class_purity_weights[major_class]["Weighted Sum"] += purity * weight
+        class_purity_weights[major_class]["Total Weight"] += weight
+
+    # 计算每个类别的加权纯度
+    class_weighted_purity = {
+        cls: round(data["Weighted Sum"] / data["Total Weight"], 4)
+        for cls, data in class_purity_weights.items()
+    }
+    
+    # 打印加权纯度结果
+    print("\nWeighted Purity by Major Class:")
+    for major_class, weighted_purity in class_weighted_purity.items():
+        print(f"{major_class}: {weighted_purity:.4f}")
+
+def print_purity_details(total_purity, cluster_details):
+    """
+    简洁打印总体纯度和每个簇的主要信息，包括样本数和总样本数。
+
+    参数:
+    - total_purity: float, 总体加权平均纯度。
+    - cluster_details: dict, 每个聚类簇的详细信息。
+    """
+    print(f"Overall Purity: {total_purity:.4f}")
+    print("Cluster Details:")
+    for cluster, details in cluster_details.items():
+        major_class = details["Major Class"]
+        purity = details["Purity"]
+        weight = details["Weight"]
+        major_class_count = details["Major Class Count"]
+        cluster_total = details["Cluster Total"]
+        print(f"{cluster}: {{Major Class: {major_class}, "
+              f"Purity: {purity:.4f}, Weight: {weight:.4f}, "
+              f"Samples: {major_class_count}/{cluster_total}}}")
+
+def purity_score_with_details(y_true, y_pred):
+    # 将字符串标签编码为整数
+    le_true = LabelEncoder()
+    le_pred = LabelEncoder()
+    
+    y_true_encoded = le_true.fit_transform(y_true)
+    y_pred_encoded = le_pred.fit_transform(y_pred)
+    
+    # 计算混淆矩阵
+    contingency_matrix = confusion_matrix(y_true_encoded, y_pred_encoded)
+    total_samples = np.sum(contingency_matrix)
+    
+    # 初始化变量存储每个簇的主要类别和对应的样本数量
+    cluster_purity_details = {}
+    weighted_purity_sum = 0  # 存储加权纯度的累积
+    cluster_weights = {}  # 存储每个簇的权重
+    
+    # 遍历每个聚类簇
+    for cluster_idx in range(contingency_matrix.shape[1]):  # 按列（预测簇）遍历
+        # 找到该聚类簇中主要类别的索引和数量
+        major_class_idx = np.argmax(contingency_matrix[:, cluster_idx])
+        major_class_count = contingency_matrix[major_class_idx, cluster_idx]
+        cluster_total = np.sum(contingency_matrix[:, cluster_idx])
+        
+        # 计算该簇的纯度
+        cluster_purity = float(major_class_count / cluster_total)
+        
+        # 权重为该簇的样本数量
+        cluster_weight = cluster_total / total_samples
+        cluster_weights[f"Cluster {cluster_idx}"] = cluster_weight
+        
+        # 加权纯度
+        weighted_purity_sum += cluster_purity * cluster_weight
+        
+        # 记录主要类别及其占比
+        cluster_purity_details[f"Cluster {cluster_idx}"] = {
+            "Major Class": str(le_true.inverse_transform([major_class_idx])[0]),  # 解码主要类别
+            "Major Class Count": int(major_class_count),
+            "Cluster Total": int(cluster_total),
+            "Purity": cluster_purity,
+            "Weight": cluster_weight,
+        }
+    
+    total_purity = weighted_purity_sum
+
+    return total_purity, cluster_purity_details
+

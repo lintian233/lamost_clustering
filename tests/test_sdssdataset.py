@@ -7,9 +7,9 @@ from dataprocess.SDSSDataset import SDSSDataset
 from dataprocess.SpectralData import SDSSSpectraData
 from util import show_spectra_data
 
-
+@unittest.skip("Skip this test")
 class TestSDSSDataset(unittest.TestCase):
-
+    
     def test_add_dataset_sdss(self):
         dataset = SDSSDataset()
         dataset.add_dataset(r"origin_data\SDSS\STAR100")

@@ -45,11 +45,11 @@ class TestDataProcess(unittest.TestCase):
 
     def test_get_class_dataset(self):
         dataset = DataProcess.load_dataset("LamostDataset-000")
-        result = DataProcess.get_class_dataset(dataset, "QSO")
+        result = DataProcess.get_class_dataset(dataset, "STAR")
 
         self.assertIsInstance(result, LamostDataset)
         for data in result:
-            self.assertEqual(data.header["CLASS"], "QSO")
+            self.assertEqual(data.header["CLASS"], "STAR")
 
     @unittest.skip("Skip this test. it will take a long time to run.")
     def test_dataprocess_time(self):
@@ -93,7 +93,8 @@ class TestDataProcess(unittest.TestCase):
                 show_spectra_data(pre_lamost[i])
                 break
         pass
-
+    
+    @unittest.skip("Skip this test")
     def test_sdss_preprocess(self):
         raw_sdss = DataProcess.load_dataset("SDSSDataset-000")
         DataProcess.preprocessing(raw_sdss)

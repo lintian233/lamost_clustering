@@ -56,8 +56,11 @@ class UMAPReducer(Reducer):
             n_components=self.dimension, **self.hyperparameters
         ).fit_transform(data)
         print_bule("UMAP reduce data2d")
-        data2d = get_data2d(dataset)
-
+        # data2d = get_data2d(dataset)
+        data2d = self.reducer(
+            n_components=2, **self.hyperparameters
+        ).fit_transform(data)
+        
         result = np.zeros(5, dtype=object)
         result[0] = data2d
         result[1] = reduce_data

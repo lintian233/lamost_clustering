@@ -12,7 +12,7 @@ class TestLamostDataset(unittest.TestCase):
         self.lamost_dataset = LamostDataset()
 
     def test_add_dataset(self):
-        dirpath = r"./origin_data/Lamost/"
+        dirpath = r"./origin_data/Lamost/all-100"
         self.lamost_dataset.add_dataset(dirpath)
 
         self.assertIsInstance(self.lamost_dataset, LamostDataset)

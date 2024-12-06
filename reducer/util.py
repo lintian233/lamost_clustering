@@ -72,7 +72,8 @@ def get_data_from_dataset(dataset: Dataset) -> tuple:
         dataset = spectral_data
     except AttributeError:
         pass
-
+    
+    # print(f"dataset number:{len(dataset)}")
     data = np.zeros((len(dataset), 3700))
     classes = np.full(len(dataset), "0", dtype="U15")
     subclasses = np.full(len(dataset), "0", dtype="U15")
@@ -80,13 +81,24 @@ def get_data_from_dataset(dataset: Dataset) -> tuple:
 
     print_bule("Get spetral data in dataset...")
     for i, spectral_data in enumerate(tqdm(dataset)):
-        data[i] = spectral_data.FLUX[:3700]
+        data[i] = normalize(spectral_data.FLUX[:3700])
         classes[i] = spectral_data.CLASS
         subclasses[i] = spectral_data.SUBCLASS
         obsid[i] = spectral_data.OBSID
 
     return data, classes, subclasses, obsid
 
+def normalize(data: NDArray) -> NDArray:
+    """
+    将数据归一化到[0,1]区间
+
+    参数：
+    data: np.ndarray, 数据
+
+    返回：
+    np.ndarray, 归一化后的数据
+    """
+    return (data - np.min(data)) / (np.max(data) - np.min(data))
 
 def if_reduced(dataset_index: str):
     """
@@ -136,10 +148,13 @@ def get_data2d(dataset: Dataset):
             min_dist=0.1,
         )
         data2d = reducer.fit_transform(get_data_from_dataset_index(dataset_index)[0])
+
     else:
         filename = os.listdir(REDUCEDATAPATH + dataset_index)[0]
         data = get_reduce_data(REDUCEDATAPATH + dataset_index + "/" + filename)
         data2d = data.data2d
+
+    # data, classes, subclasses, obsid = get_data_from_dataset(dataset)
 
     return data2d
 
